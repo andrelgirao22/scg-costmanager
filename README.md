@@ -53,26 +53,14 @@ src/main/java/br/com/alg/scg/
 │   │   ├── repository/
 │   │   └── service/
 │   ├── vendas/
-│   │   ├── entity/
-│   │   ├── valueobject/
-│   │   ├── repository/
-│   │   └── service/
+│   │   └── ...
 │   ├── compras/
-│   │   ├── entity/
-│   │   ├── valueobject/
-│   │   ├── repository/
-│   │   └── service/
+│   │   └── ...
 │   └── financeiro/
-│       ├── entity/
-│       ├── valueobject/
-│       ├── repository/
-│       └── service/
+│       └── ...
 ├── application/
 │   ├── usecase/
 │   └── dto/
-├── infrastructure/
-│   ├── repository/
-│   └── config/
 └── presentation/
     └── vaadin/
 ```
@@ -83,6 +71,7 @@ src/main/java/br/com/alg/scg/
 - **Spring Boot 3.x**: Framework base da aplicação
 - **Vaadin 24**: Framework para interface web (UI será implementada posteriormente)
 - **JPA/Hibernate**: Persistência de dados
+- **Flyway**: Gerenciamento de migrations de banco de dados (schema evolution).
 - **MariaDB**: Banco de dados
 - **Maven**: Gerenciamento de dependências
 - **JUnit 5**: Testes unitários
@@ -144,10 +133,10 @@ src/main/java/br/com/alg/scg/
 ### Executando a Aplicação
 ```bash
 # Clonar o repositório
-git clone [url-do-repositório]
+git clone https://github.com/andrelgirao22/scg-costmanager.git
 
 # Navegar para o diretório
-cd doceria-sistema
+cd scg-costmanager
 
 # Compilar e executar
 mvn clean install
@@ -165,12 +154,41 @@ mvn test jacoco:report
 
 ## Próximos Passos
 
-1. **Implementação da Persistência**: Configurar JPA repositories
-2. **Casos de Uso**: Implementar application services
-3. **Interface Web**: Desenvolver telas Vaadin
-4. **Relatórios**: Implementar geração de relatórios
-5. **Segurança**: Adicionar autenticação e autorização
-6. **Deploy**: Configurar ambiente de produção
+### 1.Implementar a Camada de Persistência (`infrastructure`)
+- **Configurar JPA/Hibernate:** Adicionar as anotações JPA (`@Entity`, `@Id`, `@OneToMany`, etc.) diretamente nas classes de domínio para mapeá-las às tabelas do banco de dados.
+- **Criar Repositórios:** Implementar as interfaces de repositório (ex: `ProductRepository`) usando Spring Data JPA. Elas estenderão `JpaRepository<Entidade, TipoId>`.
+- **Mapear Value Objects:** Utilizar `@Embeddable` e `@Embedded` para persistir os Objetos de Valor (como `Money` e `Quantity`) de forma limpa nas tabelas das entidades.
+
+### 2. Completar o Modelo de Domínio
+- **Finalizar Entidades e VOs:** Adicionar construtores, getters, e validações de negócio que faltaram nos exemplos iniciais (ex: `PurchaseItem`, `Supplier`, `Contact`).
+- **Refinar Regras de Negócio:** Garantir que todas as regras de negócio (ex: margem mínima, validação de estoque) estejam encapsuladas dentro das entidades ou em *Domain Services*.
+
+### 3.Casos de Uso
+ - **Implementar application services**
+
+### 4.Interface Web
+ - **Desenvolver telas Vaadin**
+
+### 5.Relatórios
+ - **Implementar geração de relatórios**
+
+### 6.Segurança
+ - **Adicionar autenticação e autorização**
+
+### 7.Deploy
+ - **Configurar ambiente de produção**
+
+### 8. Implementar a Camada de Aplicação (`application`)
+- **Definir DTOs (Data Transfer Objects):** Criar classes simples no pacote `application/dto` para transportar dados entre a camada de apresentação (Vaadin) e os casos de uso (ex: `CreateProductDTO`).
+- **Construir Casos de Uso (Application Services):** Criar classes de serviço (ex: `CreateProductUseCase` ou `ProductApplicationService`) que orquestram a lógica da aplicação.
+    - Elas recebem DTOs como entrada.
+    - Usam os repositórios para buscar ou salvar entidades do domínio.
+    - Invocam os métodos de negócio das entidades.
+    - Retornam DTOs ou identificadores como resultado.
+
+### 9. Desenvolver Testes
+- **Testes de Unidade:** Focar em testar as regras de negócio nas entidades de domínio e nos *Domain Services* de forma isolada (com Mocks para dependências).
+- **Testes de Integração:** Criar testes que validem o fluxo completo, desde o *Application Service* até o banco de dados, para garantir que a persistência e os relacionamentos estão funcionando corretamente.
 
 ## Estrutura de Dados
 
@@ -191,4 +209,5 @@ mvn test jacoco:report
 
 ## Contribuição
 
-Este projeto segue os princípios do DDD, mantendo o foco no domínio de negócio e separação clara de responsabilidades. Todas as regras de negócio estão encapsuladas no domínio, facilitando manutenção e evolução do sistema.
+Este projeto é guiado pelos princípios do Domain-Driven Design (DDD), com um foco pragmático para otimizar a produtividade. A principal decisão nesta abordagem é que nossas entidades de domínio também servem como nosso modelo de persistência, sendo diretamente anotadas com JPA.
+Essa escolha simplifica o desenvolvimento, reduz o código repetitivo (boilerplate) e mantém a clareza. Apesar disso, o foco principal permanece na modelagem de um domínio rico, com regras de negócio bem encapsuladas e protegidas.
