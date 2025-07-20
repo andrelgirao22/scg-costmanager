@@ -47,21 +47,23 @@ Sistema de controle de vendas e custos para doceria especializada em brownies, d
 ```
 src/main/java/br/com/alg/scg/
 ├── domain/
-│   ├── produto/
+│   ├── product/
 │   │   ├── entity/
 │   │   ├── valueobject/
-│   │   ├── repository/
-│   │   └── service/
-│   ├── vendas/
+│   │   └── repository/
+│   ├── purchases/
 │   │   └── ...
-│   ├── compras/
+│   ├── sales/
 │   │   └── ...
-│   └── financeiro/
+│   └── finance/
 │       └── ...
 ├── application/
 │   ├── usecase/
 │   └── dto/
-└── presentation/
+└── infrastructure/
+    ├── persistence/
+    └── ...
+└── presentation/ (ou api)
     └── vaadin/
 ```
 
@@ -152,25 +154,56 @@ mvn test
 mvn test jacoco:report
 ```
 
-## Próximos Passos
+## Roadmap e Próximos Passos
 
-### 1.Implementar a Camada de Persistência (`infrastructure`)
-- **Configurar JPA/Hibernate:** Adicionar as anotações JPA (`@Entity`, `@Id`, `@OneToMany`, etc.) diretamente nas classes de domínio para mapeá-las às tabelas do banco de dados.
-- **Criar Repositórios:** Implementar as interfaces de repositório (ex: `ProductRepository`) usando Spring Data JPA. Elas estenderão `JpaRepository<Entidade, TipoId>`.
-- **Mapear Value Objects:** Utilizar `@Embeddable` e `@Embedded` para persistir os Objetos de Valor (como `Money` e `Quantity`) de forma limpa nas tabelas das entidades.
+O desenvolvimento está dividido em fases para garantir a construção incremental e consistente da aplicação.
 
-### 2. Completar o Modelo de Domínio
-- **Finalizar Entidades e VOs:** Adicionar construtores, getters, e validações de negócio que faltaram nos exemplos iniciais (ex: `PurchaseItem`, `Supplier`, `Contact`).
-- **Refinar Regras de Negócio:** Garantir que todas as regras de negócio (ex: margem mínima, validação de estoque) estejam encapsuladas dentro das entidades ou em *Domain Services*.
+### ✅ Fase 1: Fundação do Domínio e Persistência (Concluído)
 
-### 3.Casos de Uso
- - **Implementar application services**
+- **[✓] Modelagem e Mapeamento JPA - Domínio de `Produto`**:
+  - Entidades: `Product`, `Recipe`, `Price`, `RecipeIngredient`.
+  - Value Objects: `ProductType`.
+  - Migração de banco de dados (`V1`) criada com Flyway.
+- **[✓] Modelagem e Mapeamento JPA - Domínio de `Compras`**:
+  - Entidades: `Purchase`, `PurchaseItem`, `Supplier`.
+  - Value Objects reutilizados: `Contact`, `Money`, `Quantity`.
+  - Migração de banco de dados (`V2`) criada com Flyway.
+- **[✓] Definição de Value Objects Comuns**:
+  - `Money`, `Quantity`, `Contact` e `UnitMeasurement` foram criados como VOs imutáveis e reutilizáveis.
 
-### 4.Interface Web
- - **Desenvolver telas Vaadin**
+### ➡️ Fase 2: Finalização do Domínio e Camada de Repositório (Em Andamento)
 
-### 5.Relatórios
- - **Implementar geração de relatórios**
+1.  **Modelar e Mapear Entidades Restantes:**
+  - **Domínio de Vendas**:
+    - `Client` (com `Contact` embutido)
+    - `Sale` (Agregado Raiz)
+    - `SaleItem`
+  - **Domínio Financeiro**:
+    - Definir e mapear entidades e VOs, como `ProfitMargin`.
+  - Criar as migrações Flyway correspondentes.
+
+2.  **Implementar os Repositórios (Spring Data JPA):**
+  - Criar as interfaces de repositório para cada Agregado Raiz:
+    - `ProductRepository`
+    - `PurchaseRepository`
+    - `SupplierRepository`
+    - `SaleRepository` (a ser criado)
+    - `ClientRepository` (a ser criado)
+
+### Fase 3: Camada de Aplicação (Casos de Uso)
+
+- **Definir DTOs (Data Transfer Objects):** Criar classes simples no pacote `application/dto` para transportar dados entre as camadas (ex: `CreateProductDTO`, `RegisterPurchaseDTO`).
+- **Construir Casos de Uso (Application Services):** Criar serviços que orquestram a lógica da aplicação (ex: `CreateProductUseCase`), utilizando os repositórios e as entidades de domínio.
+
+### Fase 4: Testes
+
+- **Testes de Unidade:** Focar nas regras de negócio das entidades de domínio e nos Value Objects.
+- **Testes de Integração:** Validar os fluxos completos, desde os `Application Services` até a persistência no banco de dados, para garantir a integração correta.
+
+### Fase 5: Interface com o Usuário e API
+
+- **Desenvolver a Interface Web:** Criar as telas com Vaadin para interagir com os casos de uso da camada de aplicação.
+- **(Opcional) Expor uma API REST:** Criar endpoints para permitir a integração com outros sistemas.
 
 ### 6.Segurança
  - **Adicionar autenticação e autorização**
