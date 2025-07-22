@@ -170,14 +170,15 @@ O desenvolvimento está dividido em fases para garantir a construção increment
   - Migração de banco de dados (`V2`) criada com Flyway.
 - **[✓] Definição de Value Objects Comuns**:
   - `Money`, `Quantity`, `Contact` e `UnitMeasurement` foram criados como VOs imutáveis e reutilizáveis.
+- **[✓] Modelagem e Mapeamento JPA - Domínio de Vendas**:
+  - Entidades: Client, Sale (Agregado Raiz), SaleItem.
+  - Value Objects reutilizados: Contact, Address, Money.
+  - Enums: ClientStatus.
+  - Migração de banco de dados (V3) criada com Flyway.
 
 ### ➡️ Fase 2: Finalização do Domínio e Camada de Repositório (Em Andamento)
 
 1.  **Modelar e Mapear Entidades Restantes:**
-  - **Domínio de Vendas**:
-    - `Client` (com `Contact` embutido)
-    - `Sale` (Agregado Raiz)
-    - `SaleItem`
   - **Domínio Financeiro**:
     - Definir e mapear entidades e VOs, como `ProfitMargin`.
   - Criar as migrações Flyway correspondentes.
