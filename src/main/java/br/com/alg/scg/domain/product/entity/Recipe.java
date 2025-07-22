@@ -3,7 +3,7 @@ package br.com.alg.scg.domain.product.entity;
 import br.com.alg.scg.domain.common.valueobject.Money;
 import br.com.alg.scg.domain.common.valueobject.Quantity;
 import br.com.alg.scg.domain.common.valueobject.RecipeIngredient;
-import br.com.alg.scg.domain.product.repository.ProductRepositoty;
+import br.com.alg.scg.domain.product.repository.ProductRepository;
 import br.com.alg.scg.domain.product.valueobject.ProductType;
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
@@ -50,7 +50,7 @@ public class Recipe {
      * por isso, recebe o repositório como dependência para buscar as informações.
      * Isso é um padrão comum em DDD para manter a entidade rica em comportamento.
      */
-    public Money calcTotalCost(ProductRepositoty productRepositoty) {
+    public Money calcTotalCost(ProductRepository productRepository) {
         if (ingredients.isEmpty()) {
             return Money.ZERO;
         }
@@ -58,7 +58,7 @@ public class Recipe {
         Money totalCost = Money.ZERO;
 
         for (RecipeIngredient recipeIngredient : ingredients) {
-            Product rawMaterial = productRepositoty.findById(recipeIngredient.getRawMaterialId())
+            Product rawMaterial = productRepository.findById(recipeIngredient.getRawMaterialId())
                     .orElseThrow(() -> new IllegalStateException("Matéria-prima não encontrada: " + recipeIngredient.getRawMaterialId()));
 
             Money priceRawMaterial = rawMaterial.getCurrentPrice()

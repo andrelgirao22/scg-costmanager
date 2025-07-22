@@ -175,13 +175,11 @@ O desenvolvimento está dividido em fases para garantir a construção increment
   - Value Objects reutilizados: Contact, Address, Money.
   - Enums: ClientStatus.
   - Migração de banco de dados (V3) criada com Flyway.
+  - -[✓] **Domínio Financeiro**:
+  - Definir e mapear entidades e VOs, como `ProfitMargin`.
+  - Criar as migrações Flyway correspondentes.
 
 ### ➡️ Fase 2: Finalização do Domínio e Camada de Repositório (Em Andamento)
-
-1.  **Modelar e Mapear Entidades Restantes:**
-  - **Domínio Financeiro**:
-    - Definir e mapear entidades e VOs, como `ProfitMargin`.
-  - Criar as migrações Flyway correspondentes.
 
 2.  **Implementar os Repositórios (Spring Data JPA):**
   - Criar as interfaces de repositório para cada Agregado Raiz:

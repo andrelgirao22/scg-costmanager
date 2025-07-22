@@ -4,17 +4,17 @@ import br.com.alg.scg.domain.common.valueobject.Money;
 import br.com.alg.scg.domain.finance.valueobject.ProfitMargin;
 import br.com.alg.scg.domain.product.entity.Product;
 import br.com.alg.scg.domain.product.entity.Recipe;
-import br.com.alg.scg.domain.product.repository.ProductRepositoty;
+import br.com.alg.scg.domain.product.repository.ProductRepository;
 import br.com.alg.scg.domain.product.valueobject.ProductType;
 
 import java.math.BigDecimal;
 
 public class SalePriceCalculatorService {
 
-    private final ProductRepositoty productRepositoty;
+    private final ProductRepository productRepository;
 
-    public SalePriceCalculatorService(ProductRepositoty productRepositoty) {
-        this.productRepositoty = productRepositoty;
+    public SalePriceCalculatorService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     public Money salePriceCalcule(Product product) {
@@ -30,7 +30,7 @@ public class SalePriceCalculatorService {
             throw new IllegalStateException("Produto final deve ter uma margem de lucro definida.");
         }
 
-        Money productionCost = recipe.calcTotalCost(productRepositoty);
+        Money productionCost = recipe.calcTotalCost(productRepository);
 
         BigDecimal marginFactor = BigDecimal.ONE.add(profitMargin.percent());
 
