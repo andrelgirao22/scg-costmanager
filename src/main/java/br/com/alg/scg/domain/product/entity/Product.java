@@ -1,6 +1,7 @@
 package br.com.alg.scg.domain.product.entity;
 
 import br.com.alg.scg.domain.common.valueobject.Money;
+import br.com.alg.scg.domain.finance.valueobject.ProfitMargin;
 import br.com.alg.scg.domain.product.valueobject.ProductType;
 
 import java.math.BigDecimal;
@@ -33,6 +34,10 @@ public class Product {
 
     @Column(precision = 10, scale = 3)
     private BigDecimal stock;
+
+    @Embedded
+    @AttributeOverride(name = "percent", column = @Column(name = "profit_margin_percent"))
+    private ProfitMargin profitMargin;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Price> pricesHistory = new ArrayList<>();
@@ -100,12 +105,23 @@ public class Product {
         this.stock = this.stock.add(quantity);
     }
 
+    public void defineProfitMargin(ProfitMargin profitMargin) {
+        if (this.type != ProductType.FINAL_PRODUCT && profitMargin != null) {
+            throw new IllegalStateException("A margem de lucro só pode ser definida para produtos finais.");
+        }
+        this.profitMargin = profitMargin;
+    }
+
     public UUID getId() { return id; }
     public String getName() { return name; }
 
     public ProductType getType() { return type; }
 
     public Optional<Recipe> getProductRecipe() { return Optional.ofNullable(recipe); }
+
+    public ProfitMargin getProfitMargin() {
+        return profitMargin;
+    }
 
     public BigDecimal getStock() { return stock; }
     public List<Price> getPricesHistory() { return List.copyOf(pricesHistory); }

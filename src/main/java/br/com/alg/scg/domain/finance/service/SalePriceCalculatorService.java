@@ -17,13 +17,18 @@ public class SalePriceCalculatorService {
         this.productRepositoty = productRepositoty;
     }
 
-    public Money salePriceCalcule(Product product, ProfitMargin profitMargin) {
+    public Money salePriceCalcule(Product product) {
         if(product.getType() != ProductType.FINAL_PRODUCT) {
             throw new IllegalArgumentException("Cálculo de preço de venda é aplicável apneas a produtos finais.");
         }
 
         Recipe recipe = product.getProductRecipe()
                 .orElseThrow(() -> new IllegalArgumentException("Produto final deve ter uma receita definida para calcular o preço"));
+
+        ProfitMargin profitMargin = product.getProfitMargin();
+        if (profitMargin == null) {
+            throw new IllegalStateException("Produto final deve ter uma margem de lucro definida.");
+        }
 
         Money productionCost = recipe.calcTotalCost(productRepositoty);
 
