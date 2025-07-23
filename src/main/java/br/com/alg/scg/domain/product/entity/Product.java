@@ -77,6 +77,12 @@ public class Product {
         this.pricesHistory.add(new Price(newPrice, LocalDateTime.now(), this));
     }
 
+    public void addPrice(Money newPrice, LocalDateTime effectiveDate) {
+        Objects.requireNonNull(newPrice, "O preço não pode ser nulo.");
+        Objects.requireNonNull(effectiveDate, "A data efetiva não pode ser nula.");
+        this.pricesHistory.add(new Price(newPrice, effectiveDate, this));
+    }
+
     public Optional<Money> getCurrentPrice() {
         return pricesHistory.stream()
                 .max((p1, p2) -> p1.getEffectiveDate().compareTo(p2.getEffectiveDate()))

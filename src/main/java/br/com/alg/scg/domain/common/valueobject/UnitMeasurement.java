@@ -3,8 +3,8 @@ package br.com.alg.scg.domain.common.valueobject;
 public enum UnitMeasurement {
 
     GRAMA("g"),
-    KILOGRAMA("kg"),
-    UNIDADE("un"),
+    KILOGRAM("kg"),
+    UNIT("un"),
     LITRO("L"),
     MILILITRO("ml");
 
