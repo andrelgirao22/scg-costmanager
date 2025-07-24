@@ -1,4 +1,4 @@
-package br.com.alg.scg_costmanager.domain.product.repository;
+package br.com.alg.scg.domain.product.repository;
 
 import br.com.alg.scg.domain.common.valueobject.Money;
 import br.com.alg.scg.domain.common.valueobject.Quantity;
@@ -10,9 +10,8 @@ import br.com.alg.scg.domain.product.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,9 +20,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = br.com.alg.scg.ScgCostmanagerApplication.class) // Especifica qual classe principal usar
-@TestPropertySource(locations = "classpath:application-test.properties")
-@Transactional // Garante rollback automático após cada teste
+@DataJpaTest // Foca nos componentes JPA, carrega repositórios, entidades, etc.
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY) // Usa H2 embutido para testes
 class ProductRepositoryTest {
 
     @Autowired
@@ -81,7 +79,7 @@ class ProductRepositoryTest {
     // ==================== READ TESTS ====================
 
     @Test
-    @DisplayName("CONSULTAR: Deve buscar um produto pelo ID")
+    @DisplayName("READ: Deve buscar um produto pelo ID")
     void findById_existingProduct_shouldReturnProduct() {
         // -- ARRANGE --
         Product product = Product.createRawMaterial("Açúcar Cristal", new BigDecimal("3.0"));
@@ -97,7 +95,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @DisplayName("CONSULTAR: Deve retornar vazio para ID inexistente")
+    @DisplayName("READ: Deve retornar vazio para ID inexistente")
     void findById_nonExistentProduct_shouldReturnEmpty() {
         // -- ARRANGE --
         UUID nonExistentId = UUID.randomUUID();
@@ -110,7 +108,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @DisplayName("CONSULTAR: Deve listar todos os produtos")
+    @DisplayName("READ: Deve listar todos os produtos")
     void findAll_multipleProducts_shouldReturnAllProducts() {
         // -- ARRANGE --
         productRepository.deleteAll(); // Limpa dados existentes
@@ -135,7 +133,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @DisplayName("CONSULTAR: Deve verificar existência de produto pelo ID")
+    @DisplayName("READ: Deve verificar existência de produto pelo ID")
     void existsById_existingProduct_shouldReturnTrue() {
         // -- ARRANGE --
         Product product = Product.createRawMaterial("Cacau em Pó", BigDecimal.ONE);
@@ -149,7 +147,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @DisplayName("CONSULTAR: Deve verificar não existência de produto pelo ID")
+    @DisplayName("READ: Deve verificar não existência de produto pelo ID")
     void existsById_nonExistentProduct_shouldReturnFalse() {
         // -- ARRANGE --
         UUID nonExistentId = UUID.randomUUID();
@@ -162,7 +160,7 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @DisplayName("CONSULTAR: Deve contar o número total de produtos")
+    @DisplayName("READ: Deve contar o número total de produtos")
     void count_multipleProducts_shouldReturnCorrectCount() {
         // -- ARRANGE --
         productRepository.deleteAll(); // Limpa dados existentes

@@ -60,6 +60,22 @@ public class Purchase {
         this.items.add(newItem);
         this.totalCost = this.totalCost.sum(newItem.getSubtotal());
     }
+    
+    public void removeItem(PurchaseItem item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Item não pode ser nulo");
+        }
+        if (this.items.remove(item)) {
+            // Recalcular o total
+            this.totalCost = this.items.stream()
+                    .map(PurchaseItem::getSubtotal)
+                    .reduce(Money.ZERO, Money::sum);
+        }
+    }
+    
+    public Money calculateTotalValue() {
+        return this.totalCost;
+    }
 
     @Override
     public boolean equals(Object o) {

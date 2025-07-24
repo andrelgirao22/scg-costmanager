@@ -68,8 +68,37 @@ public class Sale {
         this.totalValue = this.totalValue.sum(novoItem.getSubtotal());
     }
 
+    public void removeItem(SaleItem item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Item não pode ser nulo");
+        }
+        if (this.items.remove(item)) {
+            // Recalcular o total da venda
+            this.totalValue = this.items.stream()
+                    .map(SaleItem::getSubtotal)
+                    .reduce(Money.ZERO, Money::sum);
+        }
+    }
+    
+    public Money calculateTotalValue() {
+        return this.totalValue;
+    }
+    
+    // Método para buscar item por ID (útil para remoção)
+    public SaleItem findItemById(UUID itemId) {
+        return this.items.stream()
+                .filter(item -> item.getId().equals(itemId))
+                .findFirst()
+                .orElse(null);
+    }
+
     // Getters
     public List<SaleItem> getItems() {
         return List.copyOf(items); // Retorna uma cópia para proteger a lista original
+    }
+    
+    // Método interno para acessar a lista original (para JPA e operações internas)
+    protected List<SaleItem> getItemsInternal() {
+        return this.items;
     }
 }

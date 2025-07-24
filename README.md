@@ -179,22 +179,57 @@ O desenvolvimento está dividido em fases para garantir a construção increment
   - Definir e mapear entidades e VOs, como `ProfitMargin`.
   - Criar as migrações Flyway correspondentes.
 
-### ➡️ Fase 2: Finalização do Domínio e Camada de Repositório (Em Andamento)
+### ✅ Fase 2: Finalização do Domínio e Camada de Repositório (Concluído)
 
-2.  **Implementar os Repositórios (Spring Data JPA):**
+- **[✓] Implementar os Repositórios (Spring Data JPA):**
   - Criar as interfaces de repositório para cada Agregado Raiz:
     - `ProductRepository`
     - `PurchaseRepository`
     - `SupplierRepository`
-    - `SaleRepository` (a ser criado)
-    - `ClientRepository` (a ser criado)
+    - `SaleRepository`
+    - `ClientRepository`
 
-### Fase 3: Camada de Aplicação (Casos de Uso)
+### ✅ Fase 3: Camada de Aplicação e API REST (Concluído)
 
-- **Definir DTOs (Data Transfer Objects):** Criar classes simples no pacote `application/dto` para transportar dados entre as camadas (ex: `CreateProductDTO`, `RegisterPurchaseDTO`).
-- **Construir Casos de Uso (Application Services):** Criar serviços que orquestram a lógica da aplicação (ex: `CreateProductUseCase`), utilizando os repositórios e as entidades de domínio.
+- **[✓] Definir DTOs (Data Transfer Objects):** Criadas classes completas no pacote `infra/api/dto`:
+  - **Produto**: `ProductDTO`, `CreateProductDTO`
+  - **Cliente**: `ClientDTO`, `CreateClientDTO`
+  - **Fornecedor**: `SupplierDTO`, `CreateSupplierDTO`
+  - **Venda**: `SaleDTO`, `SaleItemDTO`, `CreateSaleDTO`, `AddSaleItemDTO`
+  - **Compra**: `PurchaseDTO`, `PurchaseItemDTO`, `CreatePurchaseDTO`, `AddPurchaseItemDTO`
+  - **Value Objects**: `ContactDTO`, `AddressDTO`
+  - **Mapper**: `DTOMapper` para conversão entre entidades e DTOs
+- **[✓] Construir Services de Aplicação:** Criados serviços completos:
+  - `ProductService`, `ClientService`, `SupplierService`, `PurchaseService`, `SaleService`
+  - Operações CRUD completas + validações de negócio + gestão de estoque
+- **[✓] Criar API REST Completa:** Implementados todos os controllers:
+  - `ProductController`, `ClientController`, `SupplierController`
+  - `SaleController`, `PurchaseController`
+  - Endpoints para CRUD + operações de negócio (adicionar itens, buscar por relacionamentos)
+  - Validações básicas implementadas + tratamento de erros
+  - Localização: `infra/api/controllers`
 
-### Fase 4: Testes
+### ➡️ Fase 4: Expansão da API e Documentação (Próxima)
+
+- **[ ] Implementar validações detalhadas nos DTOs:**
+  - Validações de negócio para Product, Client, Sale, Purchase
+  - Formatação de email, telefone e outros campos
+  - Validações de estoque e regras de negócio
+- **[ ] Operações avançadas nos Controllers:**
+  - Remover itens de vendas e compras
+  - Cálculo de margens de lucro
+  - Gerenciamento de estoque via endpoints
+  - Filtros e buscas avançadas (por data, status, etc.)
+- **[ ] Documentação com Swagger:**
+  - Configurar OpenAPI/Swagger
+  - Documentar todos os endpoints
+  - Exemplos de uso e códigos de resposta
+- **[ ] Gerar Collections de API:**
+  - Collections compatíveis com Insomnia
+  - Collections compatíveis com Postman
+  - Incluir exemplos de requisições
+
+### Fase 5: Testes
 
 - **Testes de Unidade:** Focar nas regras de negócio das entidades de domínio e nos Value Objects.
 - **Testes de Integração:** Validar os fluxos completos, desde os `Application Services` até a persistência no banco de dados, para garantir a integração correta.

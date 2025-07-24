@@ -53,7 +53,9 @@ public class Supplier {
     public int hashCode() {
         return getClass().hashCode();
     }
-
-
-
+    
+    // Método para permitir updates no service
+    public void setId(UUID id) {
+        this.id = id;
+    }
 }
