@@ -30,7 +30,8 @@ SCG Cost Manager is a bakery cost management system specialized in brownies, bui
 - ✅ Complete DTOs created in infra.api.dto package (including Sales and Purchase DTOs)
 - ✅ Complete REST Controllers created in infra.api.controllers with full CRUD operations
 - ✅ Business operations implemented (add items to sales/purchases, search by relationships)
-- ✅ Basic validation and error handling implemented
+- ✅ Jakarta Bean Validation implemented in all DTOs with comprehensive validation rules
+- ✅ Complete Swagger/OpenAPI documentation for all REST endpoints
 - ✅ DTOMapper for entity-DTO conversion
 
 ## Build & Test Commands
@@ -69,11 +70,13 @@ This project uses a pragmatic DDD approach where domain entities are also JPA pe
 ## Phase 4: API Enhancement and Documentation - PENDING
 
 ### Immediate Tasks for Next Session
-- [ ] **Detailed DTO Validations** - Implement comprehensive validation through DTOs
-  - [ ] Product validation rules (name, type, stock constraints)
-  - [ ] Client validation (email format, phone format, required fields)
-  - [ ] Sale/Purchase validation (quantity limits, date validation)
-  - [ ] Business rule validations (stock availability, client status)
+- [x] **Detailed DTO Validations** - ✅ COMPLETED - Jakarta Bean Validation implemented
+  - [x] Product validation rules (@NotBlank for name, @DecimalMin for stock)
+  - [x] Client validation (@Email for email, @Pattern for phone, @NotBlank for required fields)
+  - [x] Sale/Purchase validation (@Min for quantities, @PastOrPresent for dates, @NotNull for IDs)
+  - [x] Address validation (@Pattern for CEP format)
+  - [x] Supplier validation (@Pattern for CNPJ format)
+  - [x] Controllers updated with @Valid annotations and manual validations removed
 
 - [ ] **Advanced Controller Operations** - Additional business endpoints:
   - [ ] Remove items from sales and purchases
@@ -82,11 +85,12 @@ This project uses a pragmatic DDD approach where domain entities are also JPA pe
   - [ ] Client management (block/unblock with reason)
   - [ ] Search and filter operations (date ranges, status filters)
 
-- [ ] **Swagger/OpenAPI Documentation** - Complete API documentation:
-  - [ ] Configure Swagger dependencies
-  - [ ] Document all endpoints with examples
-  - [ ] Add response codes and error handling documentation
-  - [ ] Create comprehensive API usage guide
+- [x] **Swagger/OpenAPI Documentation** - ✅ COMPLETED - Complete API documentation implemented
+  - [x] SpringDoc OpenAPI dependency configured (v2.6.0)
+  - [x] All controllers documented with @Operation, @ApiResponses, @Parameter annotations
+  - [x] Response codes and error handling documented (200, 201, 400, 404)
+  - [x] Portuguese descriptions with examples and clear documentation
+  - [x] API accessible at /swagger-ui.html and /v3/api-docs
 
 - [ ] **API Collections Generation** - Testing tools compatibility:
   - [ ] Generate Insomnia collection
@@ -99,8 +103,14 @@ This project uses a pragmatic DDD approach where domain entities are also JPA pe
 - [ ] **Repository Tests** - Complete testing of all repositories
 
 ### Current API Status
-- ✅ **ProductController** - Complete CRUD + stock operations
-- ✅ **ClientController** - Complete CRUD + status management + search
-- ✅ **SupplierController** - Complete CRUD + search by name
-- ✅ **SaleController** - Complete CRUD + add items + search by client
-- ✅ **PurchaseController** - Complete CRUD + add items + search by supplier
+- ✅ **ProductController** - Complete CRUD + stock operations + Swagger documentation
+- ✅ **ClientController** - Complete CRUD + status management + search + Swagger documentation  
+- ✅ **SupplierController** - Complete CRUD + search by name + Swagger documentation
+- ✅ **SaleController** - Complete CRUD + add items + search by client + Swagger documentation
+- ✅ **PurchaseController** - Complete CRUD + add items + search by supplier + Swagger documentation
+
+### API Documentation Access
+- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
+- **OpenAPI JSON**: `http://localhost:8080/v3/api-docs`
+- **API Tags**: Produtos, Clientes, Fornecedores, Vendas, Compras
+- **Documentation Language**: Portuguese with comprehensive examples

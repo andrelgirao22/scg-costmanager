@@ -1,0 +1,577 @@
+{
+  "info": {
+    "name": "SCG Cost Manager API",
+    "description": "API REST para sistema de gerenciamento de custos de doceria",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "api_prefix",
+      "value": "/api",
+      "type": "string"
+    },
+    {
+      "key": "content_type",
+      "value": "application/json",
+      "type": "string"
+    },
+    {
+      "key": "sample_uuid",
+      "value": "123e4567-e89b-12d3-a456-426614174000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Produtos",
+      "description": "Endpoints para gerenciamento de produtos",
+      "item": [
+        {
+          "name": "Criar Produto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{{content_type}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Chocolate em Pó Premium\",\n  \"initial_stock\": 50.00\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/products",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "products"]
+            },
+            "description": "Cria uma nova matéria-prima"
+          }
+        },
+        {
+          "name": "Listar Produtos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/products",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "products"]
+            },
+            "description": "Lista todos os produtos cadastrados"
+          }
+        },
+        {
+          "name": "Buscar Produto por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/products/{{sample_uuid}}",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "products", "{{sample_uuid}}"]
+            },
+            "description": "Busca um produto específico pelo ID"
+          }
+        },
+        {
+          "name": "Excluir Produto",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/products/{{sample_uuid}}",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "products", "{{sample_uuid}}"]
+            },
+            "description": "Exclui um produto pelo ID"
+          }
+        },
+        {
+          "name": "Contar Produtos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/products/count",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "products", "count"]
+            },
+            "description": "Retorna o número total de produtos"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clientes",
+      "description": "Endpoints para gerenciamento de clientes",
+      "item": [
+        {
+          "name": "Criar Cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{{content_type}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Maria Silva Santos\",\n  \"contact\": {\n    \"email\": \"maria.santos@email.com\",\n    \"phone\": \"(11) 99999-9999\"\n  },\n  \"delivery_address\": {\n    \"street\": \"Rua das Flores, 123\",\n    \"city\": \"São Paulo\",\n    \"postal_code\": \"01234-567\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/clients",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "clients"]
+            },
+            "description": "Cadastra um novo cliente"
+          }
+        },
+        {
+          "name": "Listar Clientes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/clients",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "clients"]
+            },
+            "description": "Lista todos os clientes cadastrados"
+          }
+        },
+        {
+          "name": "Buscar Cliente por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/clients/{{sample_uuid}}",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "clients", "{{sample_uuid}}"]
+            },
+            "description": "Busca um cliente específico pelo ID"
+          }
+        },
+        {
+          "name": "Excluir Cliente",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/clients/{{sample_uuid}}",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "clients", "{{sample_uuid}}"]
+            },
+            "description": "Exclui um cliente pelo ID"
+          }
+        },
+        {
+          "name": "Contar Clientes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/clients/count",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "clients", "count"]
+            },
+            "description": "Retorna o número total de clientes"
+          }
+        },
+        {
+          "name": "Listar Clientes Ativos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/clients/active",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "clients", "active"]
+            },
+            "description": "Lista apenas clientes com status ativo"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fornecedores",
+      "description": "Endpoints para gerenciamento de fornecedores",
+      "item": [
+        {
+          "name": "Criar Fornecedor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{{content_type}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"ABC Distribuidora de Chocolates Ltda\",\n  \"document\": \"12.345.678/0001-90\",\n  \"contact\": {\n    \"email\": \"vendas@abcdistribuidora.com.br\",\n    \"phone\": \"(11) 3333-4444\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/suppliers",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "suppliers"]
+            },
+            "description": "Cadastra um novo fornecedor"
+          }
+        },
+        {
+          "name": "Listar Fornecedores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/suppliers",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "suppliers"]
+            },
+            "description": "Lista todos os fornecedores cadastrados"
+          }
+        },
+        {
+          "name": "Buscar Fornecedor por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/suppliers/{{sample_uuid}}",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "suppliers", "{{sample_uuid}}"]
+            },
+            "description": "Busca um fornecedor específico pelo ID"
+          }
+        },
+        {
+          "name": "Excluir Fornecedor",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/suppliers/{{sample_uuid}}",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "suppliers", "{{sample_uuid}}"]
+            },
+            "description": "Exclui um fornecedor pelo ID"
+          }
+        },
+        {
+          "name": "Contar Fornecedores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/suppliers/count",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "suppliers", "count"]
+            },
+            "description": "Retorna o número total de fornecedores"
+          }
+        },
+        {
+          "name": "Buscar Fornecedores por Nome",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/suppliers/search?name=ABC",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "suppliers", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "ABC",
+                  "description": "Texto para busca no nome do fornecedor"
+                }
+              ]
+            },
+            "description": "Busca fornecedores que contenham o texto no nome"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vendas",
+      "description": "Endpoints para gerenciamento de vendas",
+      "item": [
+        {
+          "name": "Criar Venda",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{{content_type}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"client_id\": \"{{sample_uuid}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/sales",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "sales"]
+            },
+            "description": "Inicia uma nova venda para um cliente"
+          }
+        },
+        {
+          "name": "Adicionar Item à Venda",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{{content_type}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": \"{{sample_uuid}}\",\n  \"quantity\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/sales/{{sample_uuid}}/items",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "sales", "{{sample_uuid}}", "items"]
+            },
+            "description": "Adiciona um produto a uma venda existente"
+          }
+        },
+        {
+          "name": "Listar Vendas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/sales",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "sales"]
+            },
+            "description": "Lista todas as vendas realizadas"
+          }
+        },
+        {
+          "name": "Buscar Venda por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/sales/{{sample_uuid}}",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "sales", "{{sample_uuid}}"]
+            },
+            "description": "Busca uma venda específica pelo ID"
+          }
+        },
+        {
+          "name": "Excluir Venda",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/sales/{{sample_uuid}}",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "sales", "{{sample_uuid}}"]
+            },
+            "description": "Exclui uma venda pelo ID"
+          }
+        },
+        {
+          "name": "Contar Vendas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/sales/count",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "sales", "count"]
+            },
+            "description": "Retorna o número total de vendas"
+          }
+        },
+        {
+          "name": "Vendas por Cliente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/sales/client/{{sample_uuid}}",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "sales", "client", "{{sample_uuid}}"]
+            },
+            "description": "Lista vendas de um cliente específico"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Compras",
+      "description": "Endpoints para gerenciamento de compras",
+      "item": [
+        {
+          "name": "Criar Compra",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{{content_type}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"supplier_id\": \"{{sample_uuid}}\",\n  \"purchase_date\": \"2025-01-25\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/purchases",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "purchases"]
+            },
+            "description": "Inicia uma nova compra com um fornecedor"
+          }
+        },
+        {
+          "name": "Adicionar Item à Compra",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{{content_type}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": \"{{sample_uuid}}\",\n  \"quantity\": 25.50,\n  \"unit_measurement\": \"KG\",\n  \"unit_cost\": 12.90\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/purchases/{{sample_uuid}}/items",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "purchases", "{{sample_uuid}}", "items"]
+            },
+            "description": "Adiciona um produto a uma compra existente"
+          }
+        },
+        {
+          "name": "Listar Compras",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/purchases",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "purchases"]
+            },
+            "description": "Lista todas as compras realizadas"
+          }
+        },
+        {
+          "name": "Buscar Compra por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/purchases/{{sample_uuid}}",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "purchases", "{{sample_uuid}}"]
+            },
+            "description": "Busca uma compra específica pelo ID"
+          }
+        },
+        {
+          "name": "Excluir Compra",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/purchases/{{sample_uuid}}",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "purchases", "{{sample_uuid}}"]
+            },
+            "description": "Exclui uma compra pelo ID"
+          }
+        },
+        {
+          "name": "Contar Compras",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/purchases/count",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "purchases", "count"]
+            },
+            "description": "Retorna o número total de compras"
+          }
+        },
+        {
+          "name": "Compras por Fornecedor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/purchases/supplier/{{sample_uuid}}",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "purchases", "supplier", "{{sample_uuid}}"]
+            },
+            "description": "Lista compras de um fornecedor específico"
+          }
+        }
+      ]
+    }
+  ]
+}

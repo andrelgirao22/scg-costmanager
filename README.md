@@ -71,9 +71,11 @@ src/main/java/br/com/alg/scg/
 
 - **Java 21**: Linguagem principal com recursos modernos
 - **Spring Boot 3.x**: Framework base da aplicação
+- **Spring Boot Validation**: Jakarta Bean Validation para validação de dados
+- **SpringDoc OpenAPI**: Documentação automática da API REST
 - **Vaadin 24**: Framework para interface web (UI será implementada posteriormente)
 - **JPA/Hibernate**: Persistência de dados
-- **Flyway**: Gerenciamento de migrations de banco de dados (schema evolution).
+- **Flyway**: Gerenciamento de migrations de banco de dados (schema evolution)
 - **MariaDB**: Banco de dados
 - **Maven**: Gerenciamento de dependências
 - **JUnit 5**: Testes unitários
@@ -145,6 +147,8 @@ mvn clean install
 mvn spring-boot:run
 ```
 
+A aplicação estará disponível em: `http://localhost:8080`
+
 ### Testes
 ```bash
 # Executar todos os testes
@@ -152,6 +156,100 @@ mvn test
 
 # Executar testes com coverage
 mvn test jacoco:report
+```
+
+## API REST e Documentação
+
+### Endpoints Disponíveis
+
+A aplicação possui uma API REST completa com os seguintes recursos:
+
+#### **Produtos** (`/api/products`)
+- `POST /api/products` - Criar novo produto
+- `GET /api/products` - Listar todos os produtos
+- `GET /api/products/{id}` - Buscar produto por ID
+- `DELETE /api/products/{id}` - Excluir produto
+- `GET /api/products/count` - Contar produtos
+
+#### **Clientes** (`/api/clients`)
+- `POST /api/clients` - Criar novo cliente
+- `GET /api/clients` - Listar todos os clientes
+- `GET /api/clients/{id}` - Buscar cliente por ID
+- `DELETE /api/clients/{id}` - Excluir cliente
+- `GET /api/clients/count` - Contar clientes
+- `GET /api/clients/active` - Listar clientes ativos
+
+#### **Fornecedores** (`/api/suppliers`)
+- `POST /api/suppliers` - Criar novo fornecedor
+- `GET /api/suppliers` - Listar todos os fornecedores
+- `GET /api/suppliers/{id}` - Buscar fornecedor por ID
+- `DELETE /api/suppliers/{id}` - Excluir fornecedor
+- `GET /api/suppliers/count` - Contar fornecedores
+- `GET /api/suppliers/search?name={nome}` - Buscar fornecedores por nome
+
+#### **Vendas** (`/api/sales`)
+- `POST /api/sales` - Criar nova venda
+- `GET /api/sales` - Listar todas as vendas
+- `GET /api/sales/{id}` - Buscar venda por ID
+- `DELETE /api/sales/{id}` - Excluir venda
+- `POST /api/sales/{saleId}/items` - Adicionar item à venda
+- `GET /api/sales/count` - Contar vendas
+- `GET /api/sales/client/{clientId}` - Buscar vendas por cliente
+
+#### **Compras** (`/api/purchases`)
+- `POST /api/purchases` - Criar nova compra
+- `GET /api/purchases` - Listar todas as compras
+- `GET /api/purchases/{id}` - Buscar compra por ID
+- `DELETE /api/purchases/{id}` - Excluir compra
+- `POST /api/purchases/{purchaseId}/items` - Adicionar item à compra
+- `GET /api/purchases/count` - Contar compras
+- `GET /api/purchases/supplier/{supplierId}` - Buscar compras por fornecedor
+
+### Documentação Swagger/OpenAPI
+
+A API possui documentação completa e interativa acessível através do Swagger UI:
+
+- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
+- **OpenAPI JSON**: `http://localhost:8080/v3/api-docs`
+
+#### Características da Documentação:
+- **Descrições em português** com exemplos claros
+- **Códigos de resposta HTTP** documentados (200, 201, 400, 404)
+- **Exemplos de UUIDs** para facilitar testes
+- **Validações documentadas** com mensagens de erro
+- **Tags organizadas** por domínio: Produtos, Clientes, Fornecedores, Vendas, Compras
+
+### Validações da API
+
+Todos os DTOs possuem validações Jakarta Bean Validation:
+
+- **Campos obrigatórios**: `@NotBlank`, `@NotNull`
+- **Validação de email**: `@Email` com formato válido
+- **Validação de telefone**: `@Pattern` para formato brasileiro
+- **Validação de CEP**: `@Pattern` para formato brasileiro
+- **Validação de CNPJ**: `@Pattern` para formato válido
+- **Validações numéricas**: `@DecimalMin`, `@Min` para valores monetários e quantidades
+- **Validações de data**: `@PastOrPresent` para datas de compras
+- **Validação de objetos aninhados**: `@Valid` para ContactDTO e AddressDTO
+
+#### Exemplo de Mensagens de Erro:
+```json
+{
+  "timestamp": "2025-01-25T10:30:00",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "errors": [
+    {
+      "field": "name",
+      "message": "Nome do produto é obrigatório"
+    },
+    {
+      "field": "contact.email",
+      "message": "Email deve ter formato válido"
+    }
+  ]
+}
 ```
 
 ## Roadmap e Próximos Passos
@@ -208,26 +306,30 @@ O desenvolvimento está dividido em fases para garantir a construção increment
   - Endpoints para CRUD + operações de negócio (adicionar itens, buscar por relacionamentos)
   - Validações básicas implementadas + tratamento de erros
   - Localização: `infra/api/controllers`
+- **[✓] Implementar Validações Jakarta Bean Validation:**
+  - Validações completas em todos os DTOs (@NotBlank, @Email, @Pattern, @DecimalMin, etc.)
+  - Validação de CEP, telefone, email e CNPJ com regex patterns
+  - Anotação @Valid nos controllers para validação automática
+  - Mensagens de erro personalizadas em português
+- **[✓] Documentação Swagger/OpenAPI Completa:**
+  - SpringDoc OpenAPI dependency configurada (v2.6.0)
+  - Todos os controllers documentados com @Operation, @ApiResponses, @Parameter
+  - Códigos de resposta HTTP documentados (200, 201, 400, 404)
+  - Descrições em português com exemplos de UUIDs
+  - Interface acessível via `/swagger-ui.html` e `/v3/api-docs`
 
-### ➡️ Fase 4: Expansão da API e Documentação (Próxima)
+### ➡️ Fase 4: Expansão da API e Melhorias (Próxima)
 
-- **[ ] Implementar validações detalhadas nos DTOs:**
-  - Validações de negócio para Product, Client, Sale, Purchase
-  - Formatação de email, telefone e outros campos
-  - Validações de estoque e regras de negócio
 - **[ ] Operações avançadas nos Controllers:**
   - Remover itens de vendas e compras
   - Cálculo de margens de lucro
-  - Gerenciamento de estoque via endpoints
+  - Gerenciamento de estoque via endpoints (aumentar/diminuir estoque)
   - Filtros e buscas avançadas (por data, status, etc.)
-- **[ ] Documentação com Swagger:**
-  - Configurar OpenAPI/Swagger
-  - Documentar todos os endpoints
-  - Exemplos de uso e códigos de resposta
+  - Gerenciamento de clientes (bloquear/desbloquear com motivo)
 - **[ ] Gerar Collections de API:**
   - Collections compatíveis com Insomnia
   - Collections compatíveis com Postman
-  - Incluir exemplos de requisições
+  - Incluir exemplos de requisições para todos os endpoints
 
 ### Fase 5: Testes
 
