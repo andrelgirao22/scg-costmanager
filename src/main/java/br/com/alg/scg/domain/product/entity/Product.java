@@ -44,6 +44,39 @@ public class Product {
 
     protected Product() { /* Construtor exigido pelo JPA */ }
 
+    // Factory method para criar produto a partir de formulário
+    public static Product createFromForm(String name, ProductType type, BigDecimal stock) {
+        Product product = new Product();
+        product.name = Objects.requireNonNull(name, "Product name cannot be null");
+        product.type = Objects.requireNonNull(type, "Product type cannot be null");
+        product.stock = stock != null ? stock : BigDecimal.ZERO;
+        return product;
+    }
+
+    // Método para inicialização antes da persistência
+    @PrePersist
+    private void prePersist() {
+        if (this.id == null) {
+            this.id = UuidCreator.getTimeOrderedEpoch();
+        }
+        if (this.stock == null) {
+            this.stock = BigDecimal.ZERO;
+        }
+    }
+
+    // Setters para binding de formulários
+    public void setName(String name) {
+        this.name = Objects.requireNonNull(name, "Product name cannot be null");
+    }
+
+    public void setType(ProductType type) {
+        this.type = Objects.requireNonNull(type, "Product type cannot be null");
+    }
+
+    public void setStock(BigDecimal stock) {
+        this.stock = stock != null ? stock : BigDecimal.ZERO;
+    }
+
     public static Product createRawMaterial(String name, BigDecimal initStock) {
         var product = new Product();
         product.id = UuidCreator.getTimeOrderedEpoch();

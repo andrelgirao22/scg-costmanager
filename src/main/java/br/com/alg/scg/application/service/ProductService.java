@@ -56,6 +56,23 @@ public class ProductService {
     }
 
     @Transactional
+    public Product save(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Produto não pode ser nulo");
+        }
+        
+        // Validações básicas
+        if (product.getName() == null || product.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do produto não pode ser vazio");
+        }
+        if (product.getType() == null) {
+            throw new IllegalArgumentException("Tipo do produto não pode ser nulo");
+        }
+        
+        return productRepository.save(product);
+    }
+
+    @Transactional
     public Product createRawMaterial(String name, BigDecimal initialStock) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Nome do produto não pode ser vazio");
@@ -104,12 +121,41 @@ public class ProductService {
         if (id == null) {
             throw new IllegalArgumentException("ID não pode ser nulo");
         }
-        return productRepository.findById(id);
+        Optional<Product> productOpt = productRepository.findById(id);
+        // Força o carregamento das coleções lazy para evitar LazyInitializationException
+        productOpt.ifPresent(product -> {
+            product.getPricesHistory().size(); // Força carregamento da collection
+            if (product.getProductRecipe().isPresent()) {
+                product.getProductRecipe().get().getRecipes().size(); // Força carregamento dos ingredientes
+            }
+        });
+        return productOpt;
     }
 
     @Transactional(readOnly = true)
     public List<Product> findAll() {
-        return productRepository.findAll();
+        List<Product> products = productRepository.findAll();
+        // Força o carregamento das coleções lazy para evitar LazyInitializationException
+        products.forEach(product -> {
+            product.getPricesHistory().size(); // Força carregamento da collection
+            if (product.getProductRecipe().isPresent()) {
+                product.getProductRecipe().get().getRecipes().size(); // Força carregamento dos ingredientes
+            }
+        });
+        return products;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Product> findByNameContainingIgnoreCase(String nameFragment) {
+        if (nameFragment == null || nameFragment.trim().isEmpty()) {
+            return findAll();
+        }
+        // Por enquanto, retornar todos os produtos até implementar filtro no repository
+        // Aplicar filtro local enquanto não implementamos no repository
+        List<Product> allProducts = findAll();
+        return allProducts.stream()
+                .filter(product -> product.getName().toLowerCase().contains(nameFragment.toLowerCase()))
+                .toList();
     }
 
     @Transactional(readOnly = true)

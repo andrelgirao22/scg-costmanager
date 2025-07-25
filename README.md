@@ -46,25 +46,56 @@ Sistema de controle de vendas e custos para doceria especializada em brownies, d
 ### Estrutura de Pacotes
 ```
 src/main/java/br/com/alg/scg/
-├── domain/
+├── domain/                    # Camada de Domínio (DDD)
 │   ├── product/
-│   │   ├── entity/
-│   │   ├── valueobject/
-│   │   └── repository/
+│   │   ├── entity/           # Product, Recipe, Price, RecipeIngredient
+│   │   ├── valueobject/      # ProductType
+│   │   └── repository/       # ProductRepository
 │   ├── purchases/
-│   │   └── ...
+│   │   ├── entity/           # Purchase, PurchaseItem, Supplier
+│   │   └── repository/       # PurchaseRepository, SupplierRepository
 │   ├── sales/
-│   │   └── ...
-│   └── finance/
-│       └── ...
-├── application/
-│   ├── usecase/
-│   └── dto/
-└── infrastructure/
-    ├── persistence/
-    └── ...
-└── presentation/ (ou api)
-    └── vaadin/
+│   │   ├── entity/           # Sale, SaleItem, Client
+│   │   ├── valueobject/      # ClientStatus
+│   │   └── repository/       # SaleRepository, ClientRepository
+│   ├── finance/
+│   │   └── valueobject/      # ProfitMargin
+│   └── common/
+│       └── valueobject/      # Money, Quantity, Contact, Address
+├── application/               # Camada de Aplicação
+│   └── service/              # ProductService, ClientService, etc.
+└── infra/                    # Camada de Infraestrutura
+    ├── api/                  # REST API
+    │   ├── controllers/      # REST Controllers
+    │   ├── dto/              # DTOs organizados por domínio
+    │   │   ├── client/       # ClientDTO, CreateClientDTO
+    │   │   ├── product/      # ProductDTO, CreateProductDTO
+    │   │   ├── sale/         # SaleDTO, CreateSaleDTO
+    │   │   ├── purchase/     # PurchaseDTO, CreatePurchaseDTO
+    │   │   ├── supplier/     # SupplierDTO, CreateSupplierDTO
+    │   │   └── common/       # ContactDTO, AddressDTO
+    │   ├── exception/        # Exception handlers
+    │   └── validation/       # Custom validators
+    ├── persistence/          # Repositórios JPA (implementações)
+    └── web/                  # Interface Web Vaadin
+        ├── layout/           # MainLayout
+        └── views/            # Telas da aplicação
+            ├── dashboard/    # DashboardView
+            ├── client/       # ClientView, ClientForm
+            ├── product/      # ProductView, ProductForm
+            ├── supplier/     # SupplierView, SupplierForm
+            ├── sale/         # SaleView, SaleForm
+            └── purchase/     # PurchaseView, PurchaseForm
+
+src/main/resources/
+├── META-INF/resources/
+│   └── themes/scg-theme/
+│       └── shared-styles.css  # CSS personalizado
+├── db/migration/              # Flyway migrations
+│   ├── V1__create_product_tables.sql
+│   ├── V2__create_purchase_tables.sql
+│   └── V3__create_sales_tables.sql
+└── application.properties     # Configurações da aplicação
 ```
 
 ## Tecnologias Utilizadas
@@ -73,7 +104,7 @@ src/main/java/br/com/alg/scg/
 - **Spring Boot 3.x**: Framework base da aplicação
 - **Spring Boot Validation**: Jakarta Bean Validation para validação de dados
 - **SpringDoc OpenAPI**: Documentação automática da API REST
-- **Vaadin 24**: Framework para interface web (UI será implementada posteriormente)
+- **Vaadin 24.8.3**: Framework para interface web completa
 - **JPA/Hibernate**: Persistência de dados
 - **Flyway**: Gerenciamento de migrations de banco de dados (schema evolution)
 - **MariaDB**: Banco de dados
@@ -147,7 +178,10 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-A aplicação estará disponível em: `http://localhost:8080`
+A aplicação estará disponível em:
+- **Interface Web (Vaadin)**: `http://localhost:8080`
+- **API REST Swagger**: `http://localhost:8080/swagger-ui.html`
+- **Documentação OpenAPI**: `http://localhost:8080/v3/api-docs`
 
 ### Testes
 ```bash
@@ -157,6 +191,135 @@ mvn test
 # Executar testes com coverage
 mvn test jacoco:report
 ```
+
+## Interface Web (Vaadin)
+
+### Telas Implementadas
+
+A aplicação possui uma interface web completa desenvolvida com **Vaadin 24.8.3**, oferecendo uma experiência de usuário moderna e responsiva:
+
+#### **Dashboard Principal** (`/dashboard` ou `/`)
+- **Visão geral do sistema** com cards estatísticos em tempo real
+- **Métricas principais**: Total de produtos, clientes, vendas e compras
+- **Design responsivo** com cards coloridos e ícones intuitivos
+- **Seção de gráficos** preparada para futuras implementações
+
+#### **Gestão de Produtos** (`/products`)
+- **CRUD completo** de produtos (matérias-primas e produtos finais)
+- **Filtro de busca** por nome do produto
+- **Grid interativo** com colunas: Nome, Tipo, Estoque, Preço Atual
+- **Formulário lateral** para criação/edição com:
+  - Seleção do tipo de produto (Matéria-Prima/Produto Final)
+  - Campo de estoque (apenas para matérias-primas)
+  - Validações automáticas de campos obrigatórios
+
+#### **Gestão de Clientes** (`/clients`)
+- **CRUD completo** de clientes com informações de contato
+- **Filtro de busca** por nome ou email
+- **Grid com status badges** (Ativo/Inativo/Bloqueado)
+- **Formulário completo** incluindo:
+  - Dados pessoais (nome, email, telefone)
+  - Endereço de entrega (CEP, rua, cidade, estado)
+  - Status do cliente com seleção via dropdown
+  - Validações de formato (email, telefone, CEP)
+
+#### **Gestão de Fornecedores** (`/suppliers`)
+- **CRUD completo** de fornecedores
+- **Filtro de busca** por nome
+- **Informações empresariais**: CNPJ, razão social, contato
+- **Formulário com validações** de CNPJ e dados obrigatórios
+
+#### **Gestão de Vendas** (`/sales`)
+- **Listagem completa** de vendas realizadas
+- **Detalhes de cada venda**: cliente, data, valor total, itens
+- **Interface para criar novas vendas**
+- **Adição de itens** com seleção de produtos e quantidades
+
+#### **Gestão de Compras** (`/purchases`)
+- **Listagem completa** de compras de matérias-primas
+- **Detalhes de cada compra**: fornecedor, data, valor total, itens
+- **Interface para registrar novas compras**
+- **Controle de estoque** através das compras registradas
+
+### Características da Interface Web
+
+#### **Design e Usabilidade**
+- **Layout responsivo** com navegação lateral retrátil
+- **Tema Lumo** do Vaadin com personalização CSS
+- **Ícones consistentes** da biblioteca VaadinIcon
+- **Cards estatísticos** com cores temáticas por módulo
+- **Grid interativo** com ordenação e seleção de linhas
+- **Formulários laterais** que abrem/fecham suavemente
+
+#### **Navegação e Estrutura**
+- **MainLayout** como estrutura base com:
+  - Header com logo e título da aplicação
+  - Menu lateral com navegação por módulos
+  - Área de conteúdo principal responsiva
+- **Roteamento automático** entre as telas
+- **Breadcrumb visual** através dos títulos das páginas
+
+#### **Funcionalidades Técnicas**
+- **Binding automático** entre formulários e entidades
+- **Validação em tempo real** nos formulários
+- **Tratamento de erros** com logs detalhados
+- **Factory methods** para criação segura de entidades
+- **@PrePersist hooks** para inicialização automática
+- **Integração completa** com os Application Services
+
+#### **Arquivos de Estilo**
+- **CSS personalizado** (`shared-styles.css`) com:
+  - Estilos para cards estatísticos
+  - Hover effects e transições
+  - Responsive design para diferentes telas
+  - Badges de status personalizados
+  - Grid styling aprimorado
+
+### Integração com Backend
+
+A interface web está **completamente integrada** com:
+- **Application Services** para lógica de negócio
+- **Entidades de domínio** através de factory methods
+- **Validações Jakarta** para consistência de dados
+- **Repositórios JPA** para persistência
+- **Value Objects** para tipos complexos (Contact, Address, Money)
+
+### Estrutura de Arquivos Web
+
+```
+src/main/java/br/com/alg/scg/infra/web/
+├── layout/
+│   └── MainLayout.java           # Layout principal
+├── views/
+│   ├── dashboard/
+│   │   └── DashboardView.java    # Tela inicial
+│   ├── client/
+│   │   ├── ClientView.java       # Listagem de clientes
+│   │   └── ClientForm.java       # Formulário de cliente
+│   ├── product/
+│   │   ├── ProductView.java      # Listagem de produtos
+│   │   └── ProductForm.java      # Formulário de produto
+│   ├── supplier/
+│   │   ├── SupplierView.java     # Listagem de fornecedores
+│   │   └── SupplierForm.java     # Formulário de fornecedor
+│   ├── sale/
+│   │   └── SaleView.java         # Gestão de vendas
+│   └── purchase/
+│       └── PurchaseView.java     # Gestão de compras
+└── components/                   # Componentes reutilizáveis
+
+src/main/resources/META-INF/resources/
+└── themes/scg-theme/
+    └── shared-styles.css         # Estilos personalizados
+```
+
+### Padrões de Desenvolvimento
+
+- **Factory Methods**: Para criação segura de entidades
+- **@PrePersist**: Para inicialização automática de campos
+- **Event-Driven**: Comunicação entre componentes via eventos
+- **Service Integration**: Injeção de dependência dos Application Services
+- **Form Binding**: Ligação automática entre formulários e entidades
 
 ## API REST e Documentação
 
@@ -318,7 +481,42 @@ O desenvolvimento está dividido em fases para garantir a construção increment
   - Descrições em português com exemplos de UUIDs
   - Interface acessível via `/swagger-ui.html` e `/v3/api-docs`
 
-### ➡️ Fase 4: Expansão da API e Melhorias (Próxima)
+### ✅ Fase 4: Interface Web Vaadin (Concluído)
+
+- **[✓] Estrutura Base da Interface Web:**
+  - MainLayout com navegação lateral responsiva
+  - Configuração do Vaadin 24.8.3 no projeto Maven
+  - CSS personalizado (shared-styles.css) para styling avançado
+  - Integração completa com Application Services
+- **[✓] Dashboard Principal:**
+  - Cards estatísticos em tempo real (produtos, clientes, vendas, compras)
+  - Design responsivo com HorizontalLayout (substituindo Board)
+  - Seção preparada para futuros gráficos e métricas
+- **[✓] Gestão de Produtos (ProductView/ProductForm):**
+  - CRUD completo com grid interativo
+  - Formulário com seleção de tipo (Matéria-Prima/Produto Final)
+  - Controle de estoque e preços
+  - Factory method `createFromForm()` para inicialização segura
+- **[✓] Gestão de Clientes (ClientView/ClientForm):**
+  - Interface completa com dados pessoais e endereço
+  - Status badges (Ativo/Inativo/Bloqueado)
+  - Validações de email, telefone e CEP
+  - @PrePersist para inicialização automática de ID e status
+- **[✓] Gestão de Fornecedores (SupplierView/SupplierForm):**
+  - CRUD com informações empresariais
+  - Validação de CNPJ e dados obrigatórios
+  - Busca por nome do fornecedor
+- **[✓] Gestão de Vendas e Compras:**
+  - Views básicas implementadas
+  - Integração com services existentes
+  - Preparadas para expansão futura
+- **[✓] Correções Técnicas:**
+  - Resolvidos problemas de encoding em application.properties
+  - Factory methods implementados para contornar construtores protegidos
+  - Compilação completa sem erros
+  - Integração bem-sucedida entre camada web e domain
+
+### ➡️ Fase 5: Expansão da API e Melhorias (Próxima)
 
 - **[ ] Operações avançadas nos Controllers:**
   - Remover itens de vendas e compras
@@ -331,33 +529,52 @@ O desenvolvimento está dividido em fases para garantir a construção increment
   - Collections compatíveis com Postman
   - Incluir exemplos de requisições para todos os endpoints
 
-### Fase 5: Testes
+### Fase 6: Aprimoramentos da Interface Web
+
+- **[ ] Melhorias na Interface:**
+  - Implementar notificações de sucesso/erro nas operações CRUD
+  - Adicionar confirmação de exclusão com diálogos
+  - Implementar busca avançada com múltiplos filtros
+  - Adicionar paginação nos grids para melhor performance
+- **[ ] Funcionalidades Avançadas:**
+  - Tela de receitas com gestão de ingredientes
+  - Calculadora de custos em tempo real
+  - Relatórios visuais com gráficos (Chart.js ou similar)
+  - Export de dados (Excel, PDF)
+- **[ ] Gestão de Vendas/Compras Avançada:**
+  - Interface para adicionar/remover itens
+  - Cálculo automático de totais
+  - Histórico de transações por cliente/fornecedor
+  - Status de pagamento e controle financeiro
+
+### Fase 7: Testes
 
 - **Testes de Unidade:** Focar nas regras de negócio das entidades de domínio e nos Value Objects.
 - **Testes de Integração:** Validar os fluxos completos, desde os `Application Services` até a persistência no banco de dados, para garantir a integração correta.
+- **Testes de Interface:** Testes automatizados das telas Vaadin com TestBench
 
-### Fase 5: Interface com o Usuário e API
+### Fase 8: Segurança e Autenticação
 
-- **Desenvolver a Interface Web:** Criar as telas com Vaadin para interagir com os casos de uso da camada de aplicação.
-- **(Opcional) Expor uma API REST:** Criar endpoints para permitir a integração com outros sistemas.
+- **[ ] Implementar Spring Security:**
+  - Autenticação baseada em sessão para interface web
+  - Proteção de endpoints REST com JWT
+  - Controle de acesso por perfis (admin, operador, consulta)
+- **[ ] Gestão de Usuários:**
+  - Tela de login e logout
+  - Cadastro de usuários do sistema
+  - Perfis de permissão por funcionalidade
 
-### 6.Segurança
- - **Adicionar autenticação e autorização**
+### Fase 9: Deploy e Produção
 
-### 7.Deploy
- - **Configurar ambiente de produção**
-
-### 8. Implementar a Camada de Aplicação (`application`)
-- **Definir DTOs (Data Transfer Objects):** Criar classes simples no pacote `application/dto` para transportar dados entre a camada de apresentação (Vaadin) e os casos de uso (ex: `CreateProductDTO`).
-- **Construir Casos de Uso (Application Services):** Criar classes de serviço (ex: `CreateProductUseCase` ou `ProductApplicationService`) que orquestram a lógica da aplicação.
-    - Elas recebem DTOs como entrada.
-    - Usam os repositórios para buscar ou salvar entidades do domínio.
-    - Invocam os métodos de negócio das entidades.
-    - Retornam DTOs ou identificadores como resultado.
-
-### 9. Desenvolver Testes
-- **Testes de Unidade:** Focar em testar as regras de negócio nas entidades de domínio e nos *Domain Services* de forma isolada (com Mocks para dependências).
-- **Testes de Integração:** Criar testes que validem o fluxo completo, desde o *Application Service* até o banco de dados, para garantir que a persistência e os relacionamentos estão funcionando corretamente.
+- **[ ] Configuração de Ambiente:**
+  - Dockerfile para containerização
+  - Docker Compose com MariaDB
+  - Configurações de perfis (dev, prod)
+  - Scripts de inicialização e migrations
+- **[ ] Monitoramento:**
+  - Health checks e métricas
+  - Logs estruturados
+  - Backup automatizado do banco
 
 ## Estrutura de Dados
 

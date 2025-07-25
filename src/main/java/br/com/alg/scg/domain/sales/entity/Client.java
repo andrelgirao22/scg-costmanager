@@ -49,9 +49,50 @@ public class Client {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.name = Objects.requireNonNull(name, "Client name cannot be null");
         this.contact = Objects.requireNonNull(contact, "Contact information cannot be null");
-        this.deliveryAddress = deliveryAddress; // Endereço pode ser opcional
         this.status = ClientStatus.ACTIVE;
         this.registrationDate = LocalDateTime.now();
+        this.deliveryAddress = deliveryAddress; // Endereço pode ser opcional
+    }
+
+    // Factory method para criar cliente a partir de dados do form
+    public static Client createFromForm(String name, Contact contact, Address deliveryAddress, ClientStatus status) {
+        Client client = new Client();
+        client.setName(name);
+        client.setContact(contact);
+        client.setStatus(status != null ? status : ClientStatus.ACTIVE);
+        client.setDeliveryAddress(deliveryAddress);
+        return client;
+    }
+
+    // Método para inicializar cliente vazio - JPA/Hibernate usage
+    @PrePersist
+    private void prePersist() {
+        if (this.id == null) {
+            this.id = UuidCreator.getTimeOrderedEpoch();
+        }
+        if (this.status == null) {
+            this.status = ClientStatus.ACTIVE;
+        }
+        if (this.registrationDate == null) {
+            this.registrationDate = LocalDateTime.now();
+        }
+    }
+
+    // Getters para form binding (caso não tenham)
+    public void setName(String name) {
+        this.name = Objects.requireNonNull(name, "Client name cannot be null");
+    }
+    
+    public void setContact(Contact contact) {
+        this.contact = Objects.requireNonNull(contact, "Contact information cannot be null");
+    }
+    
+    public void setStatus(ClientStatus status) {
+        this.status = Objects.requireNonNull(status, "Status cannot be null");
+    }
+    
+    public void setDeliveryAddress(Address deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
     }
 
     public void updateContact(Contact newContact) {

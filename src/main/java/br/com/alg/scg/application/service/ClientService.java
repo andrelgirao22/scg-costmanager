@@ -41,6 +41,23 @@ public class ClientService {
         return clientRepository.save(client);
     }
 
+    @Transactional
+    public Client save(Client client) {
+        if (client == null) {
+            throw new IllegalArgumentException("Cliente não pode ser nulo");
+        }
+        
+        // Validações básicas
+        if (client.getName() == null || client.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do cliente não pode ser vazio");
+        }
+        if (client.getContact() == null) {
+            throw new IllegalArgumentException("Contato não pode ser nulo");
+        }
+        
+        return clientRepository.save(client);
+    }
+
     // ==================== READ OPERATIONS ====================
 
     @Transactional(readOnly = true)
@@ -249,6 +266,7 @@ public class ClientService {
         }
         return clientRepository.findByNameContainingIgnoreCase(nameFragment.trim());
     }
+
 
     @Transactional(readOnly = true)
     public boolean existsByName(String name) {

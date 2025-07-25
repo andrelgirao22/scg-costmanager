@@ -55,21 +55,63 @@ mvn test jacoco:report
 ## Project Structure
 ```
 src/main/java/br/com/alg/scg/
-├── domain/
+├── domain/          # Domain entities and VOs
 │   ├── product/     # Product, Recipe entities
 │   ├── purchases/   # Purchase, Supplier entities  
 │   ├── sales/       # Sale, Client entities
-│   └── finance/     # Financial entities
-├── application/     # Use cases, DTOs
-└── infrastructure/  # Persistence, etc.
+│   ├── finance/     # Financial entities
+│   └── common/      # Shared value objects
+├── application/     # Services and DTOs
+│   └── service/     # Application services
+└── infra/          # Infrastructure layer
+    ├── api/         # REST controllers and DTOs
+    │   ├── controllers/  # REST endpoints
+    │   └── dto/         # API data transfer objects
+    └── web/         # Vaadin web interface
+        ├── layout/      # Main application layout
+        └── views/       # UI views by domain
+            ├── dashboard/   # Dashboard view
+            ├── product/     # Product management UI
+            ├── client/      # Client management UI
+            ├── sale/        # Sales UI
+            └── purchase/    # Purchase management UI
 ```
 
 ## Development Focus
 This project uses a pragmatic DDD approach where domain entities are also JPA persistence models to reduce boilerplate while maintaining rich domain modeling with well-encapsulated business rules.
 
-## Phase 4: API Enhancement and Documentation - PENDING
+## Phase 4: API Enhancement and Documentation - COMPLETED
 
-### Immediate Tasks for Next Session
+## Phase 5: Web Interface with Vaadin - COMPLETED
+
+### ✅ **Vaadin 24 Web Interface** - Complete web application interface
+- ✅ **Dependencies** - Vaadin Spring Boot Starter 24.8.3 configured
+- ✅ **MainLayout** - Responsive layout with side navigation menu
+- ✅ **Dashboard** - Statistics cards and overview of system metrics
+- ✅ **Product Management** - CRUD interface with form validation
+- ✅ **Client Management** - Complete client management with status badges
+- ✅ **Sales View** - Display sales history with client and totals
+- ✅ **Purchase View** - Display purchase history with suppliers
+- ✅ **Navigation Structure** - Organized menu by domain areas
+
+### **Web Interface Features:**
+- 📱 **Responsive Design** - Works on desktop and mobile
+- 🎨 **Lumo Theme** - Modern, professional appearance  
+- 📊 **Dashboard Cards** - Real-time system statistics
+- 🔍 **Search & Filter** - Live filtering in all list views
+- ✏️ **Inline Editing** - Click-to-edit functionality
+- ✅ **Form Validation** - Client-side validation with error messages
+- 🎯 **Context Actions** - Save, delete, cancel operations
+- 📱 **Mobile-Friendly** - Drawer navigation for small screens
+
+### **Available Routes:**
+- `/` or `/dashboard` - System overview and metrics
+- `/products` - Product management (CRUD)
+- `/clients` - Client management (CRUD)  
+- `/sales` - Sales history view
+- `/purchases` - Purchase history view
+
+### Next Development Tasks
 - [x] **Detailed DTO Validations** - ✅ COMPLETED - Jakarta Bean Validation implemented
   - [x] Product validation rules (@NotBlank for name, @DecimalMin for stock)
   - [x] Client validation (@Email for email, @Pattern for phone, @NotBlank for required fields)
