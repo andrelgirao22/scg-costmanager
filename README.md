@@ -516,7 +516,154 @@ O desenvolvimento está dividido em fases para garantir a construção increment
   - Compilação completa sem erros
   - Integração bem-sucedida entre camada web e domain
 
-### ➡️ Fase 5: Expansão da API e Melhorias (Próxima)
+### ➡️ Fase 5: Aprimoramento dos Formulários Web (Próxima)
+
+#### 🎯 **Tarefas Prioritárias - Interface de Criação**
+
+##### **1. Aprimorar Formulário de Produtos** ⭐ **ALTA PRIORIDADE**
+- **[ ] Melhorar ProductForm.java:**
+  - ✅ Adicionar validação visual em tempo real nos campos
+  - ✅ Implementar campo de unidade de medida (kg, g, L, ml, unidade)
+  - ✅ Adicionar campo opcional para descrição/observações do produto
+  - ✅ Implementar upload de imagem do produto (futuro)
+  - ✅ Melhorar layout responsivo do formulário
+  - ✅ Adicionar botões de ação mais intuitivos (Salvar/Cancelar/Limpar)
+
+##### **2. Criar Formulário Completo de Vendas** ⭐ **ALTA PRIORIDADE**  
+- **[ ] Implementar SaleForm.java:**
+  - ✅ ComboBox para seleção de cliente (com busca)
+  - ✅ Grid para adicionar/remover itens da venda
+  - ✅ ComboBox para seleção de produtos por item
+  - ✅ Campo de quantidade com validação de estoque
+  - ✅ Cálculo automático de subtotal por item
+  - ✅ Cálculo automático do total da venda
+  - ✅ Campo de desconto opcional
+  - ✅ Campo de observações da venda
+  - ✅ Validação: pelo menos 1 item na venda
+  - ✅ Data da venda (padrão: hoje)
+
+##### **3. Criar Formulário Completo de Compras** ⭐ **ALTA PRIORIDADE**
+- **[ ] Implementar PurchaseForm.java:**
+  - ✅ ComboBox para seleção de fornecedor (com busca) 
+  - ✅ Grid para adicionar/remover itens da compra
+  - ✅ ComboBox para seleção de matérias-primas por item
+  - ✅ Campo de quantidade comprada
+  - ✅ Campo de preço unitário (atualiza preço do produto)
+  - ✅ Cálculo automático de subtotal por item
+  - ✅ Cálculo automático do total da compra
+  - ✅ Campo de número da nota fiscal
+  - ✅ Data da compra
+  - ✅ Atualização automática do estoque após salvar
+
+##### **4. Aprimorar Formulário de Clientes** ⭐ **MÉDIA PRIORIDADE**
+- **[ ] Melhorar ClientForm.java:**
+  - ✅ Adicionar máscara automática para telefone e CEP
+  - ✅ Validação de CPF (opcional, pessoas físicas)
+  - ✅ Campo de data de nascimento (opcional)
+  - ✅ Campo de preferências do cliente
+  - ✅ Histórico de compras (readonly)
+  - ✅ Melhorar organização visual dos campos
+
+#### 🎨 **Melhorias de UX/UI**
+
+##### **5. Componentes Reutilizáveis** 
+- **[ ] Criar ItemGrid.java:**
+  - Componente genérico para grids de itens (venda/compra)
+  - Botões para adicionar/remover itens inline
+  - Validações automáticas por linha
+  - Cálculos automáticos de totais
+
+- **[ ] Criar SearchComboBox.java:**
+  - ComboBox com busca avançada
+  - Filtro em tempo real
+  - Criação rápida de novos registros
+  - Reutilizável para produtos, clientes, fornecedores
+
+##### **6. Notificações e Validações**
+- **[ ] Sistema de Notificações:**
+  - ✅ Notificações de sucesso após salvar
+  - ✅ Alertas de erro com detalhes específicos
+  - ✅ Confirmação antes de excluir registros
+  - ✅ Loading indicators durante operações
+
+- **[ ] Validações Avançadas:**
+  - ✅ Validação de estoque suficiente antes de criar venda
+  - ✅ Validação de produtos duplicados em venda/compra
+  - ✅ Verificação se cliente está ativo antes de venda
+  - ✅ Validação de valores monetários
+
+#### 📋 **Estrutura de Arquivos a Criar**
+
+```
+src/main/java/br/com/alg/scg/infra/web/
+├── views/
+│   ├── sale/
+│   │   ├── SaleView.java        # ✅ Existe (listar vendas)
+│   │   ├── SaleForm.java        # ❌ CRIAR (formulário completo)
+│   │   └── SaleItemGrid.java    # ❌ CRIAR (grid de itens)
+│   ├── purchase/
+│   │   ├── PurchaseView.java    # ✅ Existe (listar compras)  
+│   │   ├── PurchaseForm.java    # ❌ CRIAR (formulário completo)
+│   │   └── PurchaseItemGrid.java # ❌ CRIAR (grid de itens)
+│   └── components/              # ❌ CRIAR PASTA
+│       ├── SearchComboBox.java  # ❌ CRIAR (busca avançada)
+│       ├── ItemGrid.java        # ❌ CRIAR (grid reutilizável)  
+│       ├── MoneyField.java      # ❌ CRIAR (campo monetário)
+│       └── NotificationHelper.java # ❌ CRIAR (helper notificações)
+└── resources/META-INF/resources/frontend/styles/
+    ├── shared-styles.css        # ✅ Existe - expandir estilos
+    ├── form-styles.css          # ❌ CRIAR (estilos formulários)
+    └── grid-styles.css          # ❌ CRIAR (estilos grids)
+```
+
+#### 🎯 **Critérios de Conclusão da Fase 5**
+
+✅ **Formulário de Vendas funcional** com:
+- Seleção de cliente e produtos
+- Cálculo automático de totais  
+- Validações completas
+- Persistência no banco
+
+✅ **Formulário de Compras funcional** com:
+- Seleção de fornecedor e matérias-primas
+- Atualização automática de estoque
+- Controle de preços por item
+- Persistência no banco
+
+✅ **Componentes reutilizáveis** criados:
+- SearchComboBox para seleções
+- ItemGrid para listas de itens
+- Sistema de notificações
+
+✅ **Validações robustas** implementadas:
+- Verificação de estoque antes de venda
+- Validação de dados obrigatórios
+- Tratamento de erros com feedback visual
+
+#### ⏰ **Estimativa de Esforço**
+- **SaleForm + SaleItemGrid**: ~3-4 horas
+- **PurchaseForm + PurchaseItemGrid**: ~3-4 horas  
+- **Componentes reutilizáveis**: ~2-3 horas
+- **Melhorias de UX/Validações**: ~2-3 horas
+- **Total estimado**: **10-14 horas**
+
+### Fase 6: Gestão de Receitas e Custos
+
+##### **7. Sistema de Receitas**
+- **[ ] Implementar RecipeView.java:**
+  - Listagem de receitas por produto final
+  - Formulário para criar/editar receitas
+  - Grid de ingredientes com quantidades
+  - Cálculo automático de custo por receita
+
+##### **8. Calculadora de Custos**
+- **[ ] Implementar CostCalculator.java:**
+  - Cálculo baseado em receitas
+  - Margem de lucro configurável
+  - Sugestão de preço de venda
+  - Relatório de rentabilidade
+
+### Fase 7: Expansão da API e Collections
 
 - **[ ] Operações avançadas nos Controllers:**
   - Remover itens de vendas e compras
@@ -529,23 +676,22 @@ O desenvolvimento está dividido em fases para garantir a construção increment
   - Collections compatíveis com Postman
   - Incluir exemplos de requisições para todos os endpoints
 
-### Fase 6: Aprimoramentos da Interface Web
+### Fase 8: Melhorias Avançadas da Interface
 
-- **[ ] Melhorias na Interface:**
-  - Implementar notificações de sucesso/erro nas operações CRUD
-  - Adicionar confirmação de exclusão com diálogos
-  - Implementar busca avançada com múltiplos filtros
-  - Adicionar paginação nos grids para melhor performance
+- **[ ] Dashboard Avançado:**
+  - Gráficos de vendas por período
+  - Top produtos mais vendidos  
+  - Análise de rentabilidade
+  - Alertas de estoque baixo
+- **[ ] Relatórios:**
+  - Export para Excel/PDF
+  - Relatórios customizáveis
+  - Filtros avançados por data/categoria
 - **[ ] Funcionalidades Avançadas:**
-  - Tela de receitas com gestão de ingredientes
-  - Calculadora de custos em tempo real
-  - Relatórios visuais com gráficos (Chart.js ou similar)
-  - Export de dados (Excel, PDF)
-- **[ ] Gestão de Vendas/Compras Avançada:**
-  - Interface para adicionar/remover itens
-  - Cálculo automático de totais
-  - Histórico de transações por cliente/fornecedor
-  - Status de pagamento e controle financeiro
+  - Busca global na aplicação
+  - Atalhos de teclado
+  - Temas claro/escuro
+  - Responsividade mobile completa
 
 ### Fase 7: Testes
 

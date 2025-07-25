@@ -1,9 +1,0 @@
-{
-  "name": "scg-theme",
-  "parent": "lumo",
-  "assets": {
-    "styles": {
-      "shared-styles.css": "./shared-styles.css"
-    }
-  }
-}

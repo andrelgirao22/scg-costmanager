@@ -32,5 +32,10 @@ build/
 ### VS Code ###
 .vscode/
 
+### Node.js (Vaadin Frontend) ###
+node_modules/
+package-lock.json
+yarn.lock
+
 scgcm.env
 

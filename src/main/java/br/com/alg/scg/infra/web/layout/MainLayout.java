@@ -14,13 +14,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import com.vaadin.flow.component.dependency.CssImport;
 
 /**
  * Layout principal da aplicação com menu lateral
  */
 @AnonymousAllowed
-@CssImport("./styles/shared-styles.css")
 public class MainLayout extends AppLayout {
 
     private H1 viewTitle;
@@ -92,6 +90,9 @@ public class MainLayout extends AppLayout {
 
         return nav;
     }
+
+
+
 
     @Override
     protected void afterNavigation() {
