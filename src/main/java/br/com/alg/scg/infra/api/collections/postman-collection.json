@@ -45,7 +45,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Chocolate em Pó Premium\",\n  \"initial_stock\": 50.00\n}",
+              "raw": "{\n  \"name\": \"Chocolate em Pó Premium\",\n  \"type\": \"RAW_MATERIAL\",\n  \"initial_stock\": 50.00\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -57,7 +57,35 @@
               "host": ["{{base_url}}"],
               "path": ["{{api_prefix}}", "products"]
             },
-            "description": "Cria uma nova matéria-prima"
+            "description": "Cria um novo produto (RAW_MATERIAL ou FINAL_PRODUCT)"
+          }
+        },
+        {
+          "name": "Criar Produto Final",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{{content_type}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Brownie de Chocolate Premium\",\n  \"type\": \"FINAL_PRODUCT\",\n  \"initial_stock\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/products",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "products"]
+            },
+            "description": "Cria um produto final (brownie)"
           }
         },
         {
@@ -84,6 +112,34 @@
               "path": ["{{api_prefix}}", "products", "{{sample_uuid}}"]
             },
             "description": "Busca um produto específico pelo ID"
+          }
+        },
+        {
+          "name": "Atualizar Nome do Produto",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{{content_type}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Chocolate em Pó Premium Extra\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/products/{{sample_uuid}}/name",
+              "host": ["{{base_url}}"],
+              "path": ["{{api_prefix}}", "products", "{{sample_uuid}}", "name"]
+            },
+            "description": "Atualiza apenas o nome de um produto existente"
           }
         },
         {

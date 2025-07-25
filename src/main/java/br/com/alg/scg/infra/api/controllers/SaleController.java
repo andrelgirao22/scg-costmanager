@@ -6,7 +6,10 @@ import br.com.alg.scg.application.service.SaleService;
 import br.com.alg.scg.domain.product.entity.Product;
 import br.com.alg.scg.domain.sales.entity.Client;
 import br.com.alg.scg.domain.sales.entity.Sale;
-import br.com.alg.scg.infra.api.dto.*;
+import br.com.alg.scg.infra.api.dto.DTOMapper;
+import br.com.alg.scg.infra.api.dto.sale.AddSaleItemDTO;
+import br.com.alg.scg.infra.api.dto.sale.CreateSaleDTO;
+import br.com.alg.scg.infra.api.dto.sale.SaleDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -170,7 +173,7 @@ public class SaleController {
         }
         
         try {
-            Sale updatedSale = saleService.addItem(saleId, product, addItemDTO.quantity());
+            Sale updatedSale = saleService.addItem(saleId, product, addItemDTO.quantity().intValue());
             return ResponseEntity.ok(mapper.toDTO(updatedSale));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();

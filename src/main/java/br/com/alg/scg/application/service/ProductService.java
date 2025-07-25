@@ -6,6 +6,7 @@ import br.com.alg.scg.domain.finance.valueobject.ProfitMargin;
 import br.com.alg.scg.domain.product.entity.Product;
 import br.com.alg.scg.domain.product.entity.Recipe;
 import br.com.alg.scg.domain.product.repository.ProductRepository;
+import br.com.alg.scg.domain.product.valueobject.ProductType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,33 @@ public class ProductService {
     }
 
     // ==================== CREATE OPERATIONS ====================
+
+    @Transactional
+    public Product createProduct(String name, ProductType type, BigDecimal initialStock) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do produto não pode ser vazio");
+        }
+        if (type == null) {
+            throw new IllegalArgumentException("Tipo do produto não pode ser nulo");
+        }
+
+        Product product;
+        switch (type) {
+            case RAW_MATERIAL:
+                if (initialStock == null || initialStock.compareTo(BigDecimal.ZERO) < 0) {
+                    throw new IllegalArgumentException("Estoque inicial não pode ser negativo para matérias-primas");
+                }
+                product = Product.createRawMaterial(name, initialStock);
+                break;
+            case FINAL_PRODUCT:
+                product = Product.createFinalProduct(name);
+                break;
+            default:
+                throw new IllegalArgumentException("Tipo de produto não suportado: " + type);
+        }
+        
+        return productRepository.save(product);
+    }
 
     @Transactional
     public Product createRawMaterial(String name, BigDecimal initialStock) {
@@ -98,6 +126,23 @@ public class ProductService {
     }
 
     // ==================== UPDATE OPERATIONS ====================
+
+    @Transactional
+    public Product updateProductName(UUID productId, String newName) {
+        if (productId == null) {
+            throw new IllegalArgumentException("ID do produto não pode ser nulo");
+        }
+        if (newName == null || newName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do produto não pode ser vazio");
+        }
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com ID: " + productId));
+
+        product.updateName(newName);
+        
+        return productRepository.save(product);
+    }
 
     @Transactional
     public Product addPrice(UUID productId, Money price) {

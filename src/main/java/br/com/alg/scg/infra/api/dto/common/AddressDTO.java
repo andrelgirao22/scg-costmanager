@@ -1,4 +1,4 @@
-package br.com.alg.scg.infra.api.dto;
+package br.com.alg.scg.infra.api.dto.common;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;

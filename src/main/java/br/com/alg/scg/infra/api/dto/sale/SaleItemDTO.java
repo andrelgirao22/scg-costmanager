@@ -1,11 +1,12 @@
-package br.com.alg.scg.infra.api.dto;
+package br.com.alg.scg.infra.api.dto.sale;
 
+import br.com.alg.scg.infra.api.dto.product.ProductDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record PurchaseItemDTO(
+public record SaleItemDTO(
         @JsonProperty("id")
         UUID id,
         
@@ -15,12 +16,9 @@ public record PurchaseItemDTO(
         @JsonProperty("quantity")
         BigDecimal quantity,
         
-        @JsonProperty("unit_measurement")
-        String unitMeasurement,
+        @JsonProperty("unit_price")
+        BigDecimal unitPrice,
         
-        @JsonProperty("unit_cost")
-        BigDecimal unitCost,
-        
-        @JsonProperty("subtotal")
-        BigDecimal subtotal
+        @JsonProperty("total_price")
+        BigDecimal totalPrice
 ) {}

@@ -49,9 +49,11 @@ Ambas as coleções vêm com variáveis pré-configuradas:
 ## 📋 Endpoints Organizados
 
 ### 🏷️ Produtos (`/api/products`)
-- **POST** Criar Produto
+- **POST** Criar Produto (Matéria-prima)
+- **POST** Criar Produto Final (Brownie)
 - **GET** Listar Produtos  
 - **GET** Buscar Produto por ID
+- **PATCH** Atualizar Nome do Produto
 - **DELETE** Excluir Produto
 - **GET** Contar Produtos
 
@@ -91,11 +93,28 @@ Ambas as coleções vêm com variáveis pré-configuradas:
 
 ## 📊 Exemplos de Dados
 
-### Criar Produto
+### Criar Produto (Matéria-prima)
 ```json
 {
   "name": "Chocolate em Pó Premium",
+  "type": "RAW_MATERIAL",
   "initial_stock": 50.00
+}
+```
+
+### Criar Produto Final
+```json
+{
+  "name": "Brownie de Chocolate Premium",
+  "type": "FINAL_PRODUCT",
+  "initial_stock": 0
+}
+```
+
+### Atualizar Nome do Produto
+```json
+{
+  "name": "Chocolate em Pó Premium Extra"
 }
 ```
 

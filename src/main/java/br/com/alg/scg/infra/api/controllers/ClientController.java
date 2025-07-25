@@ -2,9 +2,9 @@ package br.com.alg.scg.infra.api.controllers;
 
 import br.com.alg.scg.application.service.ClientService;
 import br.com.alg.scg.domain.sales.entity.Client;
-import br.com.alg.scg.infra.api.dto.ClientDTO;
-import br.com.alg.scg.infra.api.dto.CreateClientDTO;
 import br.com.alg.scg.infra.api.dto.DTOMapper;
+import br.com.alg.scg.infra.api.dto.client.ClientDTO;
+import br.com.alg.scg.infra.api.dto.client.CreateClientDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -1,4 +1,4 @@
-package br.com.alg.scg.infra.api.dto;
+package br.com.alg.scg.infra.api.dto.purchase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.DecimalMin;
@@ -15,7 +15,7 @@ public record AddPurchaseItemDTO(
         
         @JsonProperty("quantity")
         @NotNull(message = "Quantidade é obrigatória")
-        @DecimalMin(value = "0.01", message = "Quantidade deve ser maior que zero")
+        @DecimalMin(value = "0.001", message = "Quantidade deve ser maior que zero")
         BigDecimal quantity,
         
         @JsonProperty("unit_measurement")

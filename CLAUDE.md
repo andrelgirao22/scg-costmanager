@@ -114,3 +114,33 @@ This project uses a pragmatic DDD approach where domain entities are also JPA pe
 - **OpenAPI JSON**: `http://localhost:8080/v3/api-docs`
 - **API Tags**: Produtos, Clientes, Fornecedores, Vendas, Compras
 - **Documentation Language**: Portuguese with comprehensive examples
+
+## Core Business Logic - Key Functionality
+
+### Custo de Fabricação e Precificação
+**Principal funcionalidade da aplicação:** Calcular o custo de fabricação de produtos finais baseado no custo das matérias-primas e aplicar margem de lucro para definir o preço de venda.
+
+**Fluxo principal:**
+1. **ProductController**: Cadastra produtos (matérias-primas e produtos finais)
+   - Matérias-primas: cadastradas com nome e estoque inicial
+   - Produtos finais: cadastrados com nome (estoque sempre zero, pois são feitos sob demanda)
+
+2. **PurchaseController**: Registra compras de matérias-primas
+   - Aqui é onde as matérias-primas ganham **preço unitário** (preço x, quantidade y)
+   - Exemplo: Compra de 10kg de farinha por R$ 50,00 = R$ 5,00/kg
+
+3. **Recipe (Receita)**: Define quais matérias-primas e quantidades são necessárias para o produto final
+   - Exemplo: Brownie = 200g farinha + 100g chocolate + 50g açúcar
+
+4. **Cálculo de Custo**: 
+   - Custo do brownie = (0,2kg × R$ 5,00/kg farinha) + (0,1kg × R$ 15,00/kg chocolate) + (0,05kg × R$ 3,00/kg açúcar)
+   - Custo total = R$ 1,00 + R$ 1,50 + R$ 0,15 = R$ 2,65
+
+5. **Precificação Final**:
+   - Custo + Margem de Lucro = Preço de Venda
+   - R$ 2,65 + 60% = R$ 4,24
+
+**Resumo dos Controllers:**
+- **ProductController**: CRUD de produtos (não define preços, apenas cadastra)
+- **PurchaseController**: Define preços das matérias-primas através das compras
+- **SaleController**: Registra vendas dos produtos finais pelos preços calculados

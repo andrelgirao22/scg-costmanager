@@ -1,4 +1,4 @@
-package br.com.alg.scg.infra.api.dto;
+package br.com.alg.scg.infra.api.dto.product;
 
 import br.com.alg.scg.domain.product.valueobject.ProductType;
 import com.fasterxml.jackson.annotation.JsonProperty;

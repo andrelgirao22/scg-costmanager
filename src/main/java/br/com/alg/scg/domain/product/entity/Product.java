@@ -117,6 +117,13 @@ public class Product {
         }
         this.profitMargin = profitMargin;
     }
+    
+    public void updateName(String newName) {
+        if (newName == null || newName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do produto não pode ser vazio");
+        }
+        this.name = newName.trim();
+    }
 
     public UUID getId() { return id; }
     public String getName() { return name; }

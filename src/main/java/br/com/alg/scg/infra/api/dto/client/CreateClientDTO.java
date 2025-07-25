@@ -1,5 +1,7 @@
-package br.com.alg.scg.infra.api.dto;
+package br.com.alg.scg.infra.api.dto.client;
 
+import br.com.alg.scg.infra.api.dto.common.AddressDTO;
+import br.com.alg.scg.infra.api.dto.common.ContactDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

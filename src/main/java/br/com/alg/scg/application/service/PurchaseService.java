@@ -130,6 +130,27 @@ public class PurchaseService {
     // ==================== UPDATE OPERATIONS ====================
 
     @Transactional
+    public Purchase updatePurchase(UUID purchaseId, Supplier supplier, LocalDate purchaseDate) {
+        if (purchaseId == null) {
+            throw new IllegalArgumentException("ID da compra não pode ser nulo");
+        }
+        if (supplier == null) {
+            throw new IllegalArgumentException("Fornecedor não pode ser nulo");
+        }
+        if (purchaseDate == null) {
+            throw new IllegalArgumentException("Data da compra não pode ser nula");
+        }
+
+        Purchase purchase = purchaseRepository.findById(purchaseId)
+                .orElseThrow(() -> new IllegalArgumentException("Compra não encontrada com ID: " + purchaseId));
+
+        purchase.setSupplier(supplier);
+        purchase.setDate(purchaseDate.atStartOfDay());
+        
+        return purchaseRepository.save(purchase);
+    }
+
+    @Transactional
     public Purchase addItem(UUID purchaseId, Product product, Quantity quantity, Money unitPrice) {
         if (purchaseId == null) {
             throw new IllegalArgumentException("ID da compra não pode ser nulo");

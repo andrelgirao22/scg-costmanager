@@ -2,9 +2,10 @@ package br.com.alg.scg.infra.api.controllers;
 
 import br.com.alg.scg.application.service.ProductService;
 import br.com.alg.scg.domain.product.entity.Product;
-import br.com.alg.scg.infra.api.dto.CreateProductDTO;
 import br.com.alg.scg.infra.api.dto.DTOMapper;
-import br.com.alg.scg.infra.api.dto.ProductDTO;
+import br.com.alg.scg.infra.api.dto.product.CreateProductDTO;
+import br.com.alg.scg.infra.api.dto.product.ProductDTO;
+import br.com.alg.scg.infra.api.dto.product.UpdateProductNameDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,7 +39,7 @@ public class ProductController {
     @PostMapping
     @Operation(
         summary = "Criar novo produto",
-        description = "Cria uma nova matéria-prima com nome e estoque inicial"
+        description = "Cria um novo produto (matéria-prima ou produto final). Para matérias-primas, o estoque inicial é obrigatório. Para produtos finais, o estoque é sempre zero."
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -55,7 +56,11 @@ public class ProductController {
     public ResponseEntity<ProductDTO> createProduct(
             @Parameter(description = "Dados do produto a ser criado", required = true)
             @Valid @RequestBody CreateProductDTO createDTO) {
-        Product product = productService.createRawMaterial(createDTO.name(), createDTO.initialStock());
+        Product product = productService.createProduct(
+            createDTO.name(), 
+            createDTO.type(), 
+            createDTO.initialStock()
+        );
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDTO(product));
     }
     
@@ -100,6 +105,43 @@ public class ProductController {
         return productService.findById(id)
                 .map(product -> ResponseEntity.ok(mapper.toDTO(product)))
                 .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @PatchMapping("/{id}/name")
+    @Operation(
+        summary = "Atualizar nome do produto",
+        description = "Atualiza apenas o nome de um produto existente, mantendo tipo e demais propriedades inalteradas."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200", 
+            description = "Nome do produto atualizado com sucesso",
+            content = @Content(schema = @Schema(implementation = ProductDTO.class))
+        ),
+        @ApiResponse(
+            responseCode = "400", 
+            description = "Nome inválido fornecido",
+            content = @Content
+        ),
+        @ApiResponse(
+            responseCode = "404", 
+            description = "Produto não encontrado",
+            content = @Content
+        )
+    })
+    public ResponseEntity<ProductDTO> updateProductName(
+            @Parameter(description = "ID único do produto", required = true, example = "123e4567-e89b-12d3-a456-426614174000")
+            @PathVariable UUID id,
+            @Parameter(description = "Novo nome do produto", required = true)
+            @Valid @RequestBody UpdateProductNameDTO updateNameDTO) {
+        
+        if (!productService.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        Product updatedProduct = productService.updateProductName(id, updateNameDTO.name());
+        
+        return ResponseEntity.ok(mapper.toDTO(updatedProduct));
     }
     
     @DeleteMapping("/{id}")

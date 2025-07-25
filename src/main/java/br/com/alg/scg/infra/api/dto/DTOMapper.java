@@ -9,8 +9,18 @@ import br.com.alg.scg.domain.purchases.entity.Supplier;
 import br.com.alg.scg.domain.sales.entity.Client;
 import br.com.alg.scg.domain.sales.entity.Sale;
 import br.com.alg.scg.domain.sales.entity.SaleItem;
+import br.com.alg.scg.infra.api.dto.client.ClientDTO;
+import br.com.alg.scg.infra.api.dto.common.AddressDTO;
+import br.com.alg.scg.infra.api.dto.common.ContactDTO;
+import br.com.alg.scg.infra.api.dto.product.ProductDTO;
+import br.com.alg.scg.infra.api.dto.purchase.PurchaseDTO;
+import br.com.alg.scg.infra.api.dto.purchase.PurchaseItemDTO;
+import br.com.alg.scg.infra.api.dto.sale.SaleDTO;
+import br.com.alg.scg.infra.api.dto.sale.SaleItemDTO;
+import br.com.alg.scg.infra.api.dto.supplier.SupplierDTO;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
 @Component
@@ -76,8 +86,8 @@ public class DTOMapper {
                 sale.getId(),
                 toDTO(sale.getClient()),
                 sale.getSaleDate(),
-                sale.getItems().stream().map(this::toDTO).collect(Collectors.toList()),
-                sale.getTotalValue().value()
+                sale.getTotalValue().value(),
+                sale.getItems().stream().map(this::toDTO).collect(Collectors.toList())
         );
     }
     
@@ -85,7 +95,7 @@ public class DTOMapper {
         return new SaleItemDTO(
                 saleItem.getId(),
                 toDTO(saleItem.getProduct()),
-                saleItem.getQuantity(),
+                new BigDecimal(saleItem.getQuantity()),
                 saleItem.getUnitPrice().value(),
                 saleItem.getSubtotal().value()
         );
@@ -97,9 +107,9 @@ public class DTOMapper {
         return new PurchaseDTO(
                 purchase.getId(),
                 toDTO(purchase.getSupplier()),
-                purchase.getDate(),
-                purchase.getItems().stream().map(this::toDTO).collect(Collectors.toList()),
-                purchase.getTotalCost().value()
+                purchase.getDate().toLocalDate(),
+                purchase.getTotalCost().value(),
+                purchase.getItems().stream().map(this::toDTO).collect(Collectors.toList())
         );
     }
     

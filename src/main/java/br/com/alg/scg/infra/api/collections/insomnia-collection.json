@@ -59,11 +59,11 @@
       "created": 1737896400000,
       "url": "{{ _.base_url }}{{ _.api_prefix }}/products",
       "name": "Criar Produto",
-      "description": "Cria uma nova matéria-prima",
+      "description": "Cria um novo produto (RAW_MATERIAL ou FINAL_PRODUCT)",
       "method": "POST",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"name\": \"Chocolate em Pó Premium\",\n  \"initial_stock\": 50.00\n}"
+        "text": "{\n  \"name\": \"Chocolate em Pó Premium\",\n  \"type\": \"RAW_MATERIAL\",\n  \"initial_stock\": 50.00\n}"
       },
       "parameters": [],
       "headers": [
@@ -120,6 +120,68 @@
       "headers": [],
       "authentication": {},
       "metaSortKey": -1737896200000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_create_final_product",
+      "_type": "request",
+      "parentId": "fld_products",
+      "modified": 1737896400000,
+      "created": 1737896400000,
+      "url": "{{ _.base_url }}{{ _.api_prefix }}/products",
+      "name": "Criar Produto Final",
+      "description": "Cria um produto final (brownie)",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Brownie de Chocolate Premium\",\n  \"type\": \"FINAL_PRODUCT\",\n  \"initial_stock\": 0\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "{{ _.content_type }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1737896150000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global"
+    },
+    {
+      "_id": "req_update_product_name",
+      "_type": "request",
+      "parentId": "fld_products",
+      "modified": 1737896400000,
+      "created": 1737896400000,
+      "url": "{{ _.base_url }}{{ _.api_prefix }}/products/{{ _.sample_uuid }}/name",
+      "name": "Atualizar Nome do Produto",
+      "description": "Atualiza apenas o nome de um produto existente",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Chocolate em Pó Premium Extra\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "{{ _.content_type }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1737896125000,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,
