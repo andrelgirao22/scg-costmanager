@@ -7,6 +7,7 @@ import br.com.alg.scg.infra.web.layout.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
@@ -25,6 +26,8 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.format.DateTimeFormatter;
+
+import static br.com.alg.scg.infra.web.views.components.ComponentUtil.createConfirmDialog;
 
 /**
  * View para gerenciamento de clientes
@@ -148,20 +151,27 @@ public class ClientView extends Main {
     }
 
     private void deleteClient(ClientForm.DeleteEvent event) {
-        try {
-            clientService.deleteById(event.getClient().getId());
-            updateList();
-            closeEditor();
-            
-            // Notificação de sucesso
-            Notification notification = Notification.show("Cliente excluído com sucesso!");
-            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-        } catch (Exception e) {
-            // Notificação de erro
-            Notification notification = Notification.show("Erro ao excluir cliente: " + e.getMessage());
-            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            e.printStackTrace();
-        }
+        var client = event.getClient();
+        String description =  "Confirma remoção do cliente " + client.getName() + "" +
+                "? Essa operação não pode ser desfeita posteriormente.";
+        ConfirmDialog dialog = createConfirmDialog(description);
+        dialog.addConfirmListener(confirmEvent -> {
+            try {
+                clientService.deleteById(event.getClient().getId());
+                updateList();
+                closeEditor();
+
+                // Notificação de sucesso
+                Notification notification = Notification.show("Cliente excluído com sucesso!");
+                notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            } catch (Exception e) {
+                // Notificação de erro
+                Notification notification = Notification.show("Erro ao excluir cliente: " + e.getMessage());
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                e.printStackTrace();
+            }
+        });
+        dialog.open();
     }
 
     public void editClient(Client client) {

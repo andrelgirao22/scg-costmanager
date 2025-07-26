@@ -7,6 +7,7 @@ import br.com.alg.scg.infra.web.layout.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
@@ -24,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import static br.com.alg.scg.infra.web.views.components.ComponentUtil.createConfirmDialog;
 
 /**
  * View para gerenciamento de produtos
@@ -134,20 +137,28 @@ public class ProductView extends Main {
     }
 
     private void deleteProduct(ProductForm.DeleteEvent event) {
-        try {
-            productService.deleteById(event.getProduct().getId());
-            updateList();
-            closeEditor();
-            
-            // Notificação de sucesso
-            Notification notification = Notification.show("Produto excluído com sucesso!");
-            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-        } catch (Exception e) {
-            // Notificação de erro
-            Notification notification = Notification.show("Erro ao excluir produto: " + e.getMessage());
-            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            e.printStackTrace();
-        }
+        var product = event.getProduct();
+        String description =  "Confirma remoção do produto " + product.getName() + "" +
+                "? Essa operação não pode ser desfeita posteriormente.";
+        ConfirmDialog dialog = createConfirmDialog(description);
+        dialog.addConfirmListener(confirmEvent -> {
+            try {
+                productService.deleteById(event.getProduct().getId());
+                updateList();
+                closeEditor();
+
+                // Notificação de sucesso
+                Notification notification = Notification.show("Produto excluído com sucesso!");
+                notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+            } catch (Exception e) {
+                // Notificação de erro
+                Notification notification = Notification.show("Erro ao excluir produto: " + e.getMessage());
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                e.printStackTrace();
+            }
+        });
+        dialog.open();
     }
 
     public void editProduct(Product product) {
