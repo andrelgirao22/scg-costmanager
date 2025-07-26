@@ -3,6 +3,15 @@
 ## Project Overview
 SCG Cost Manager is a bakery cost management system specialized in brownies, built with Domain-Driven Design (DDD) principles using Java 21 and Vaadin for web interface.
 
+## 📋 Task Management
+**Para tarefas pendentes detalhadas, consulte**: [TASK.md](./TASK.md)
+
+### Índice de Tarefas
+- 📝 **Vaadin Forms Implementation** - Formulários para cadastro (Produto, Cliente, Compra, Venda)
+- 🚀 **Advanced Controller Operations** - Funcionalidades avançadas de negócio
+- 📋 **API Collections Generation** - Collections para Insomnia/Postman  
+- 🧪 **Testing Implementation** - Testes unitários e integração
+
 ## Key Technologies
 - **Java 21** with Spring Boot 3.x
 - **Vaadin 24** for web UI (to be implemented)

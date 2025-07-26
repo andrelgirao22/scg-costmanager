@@ -65,6 +65,14 @@
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		
+		<!-- Spring Boot DevTools para desenvolvimento -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
 
 		<dependency>
 			<groupId>com.github.f4b6a3</groupId>
@@ -95,6 +103,38 @@
 		</dependency>
 
 	</dependencies>
+	
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<spring.profiles.active>dev</spring.profiles.active>
+				<vaadin.productionMode>false</vaadin.productionMode>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<spring.profiles.active>prod</spring.profiles.active>
+				<vaadin.productionMode>true</vaadin.productionMode>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.vaadin</groupId>
+						<artifactId>vaadin-maven-plugin</artifactId>
+						<configuration>
+							<skipNpmInstall>false</skipNpmInstall>
+							<skipFrontendCompilation>false</skipFrontendCompilation>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	
 	<dependencyManagement>
 		<dependencies>
@@ -145,6 +185,11 @@
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-maven-plugin</artifactId>
 				<version>${vaadin.version}</version>
+				<configuration>
+					<!-- Skip NPM para desenvolvimento quando Node.js não estiver disponível -->
+					<skipNpmInstall>true</skipNpmInstall>
+					<skipFrontendCompilation>true</skipFrontendCompilation>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>

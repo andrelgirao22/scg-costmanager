@@ -11,6 +11,8 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -119,8 +121,14 @@ public class ProductView extends Main {
             productService.save(event.getProduct());
             updateList();
             closeEditor();
+            
+            // Notificação de sucesso
+            Notification notification = Notification.show("Produto salvo com sucesso!");
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         } catch (Exception e) {
-            // TODO: Implementar notificação de erro
+            // Notificação de erro
+            Notification notification = Notification.show("Erro ao salvar produto: " + e.getMessage());
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             e.printStackTrace();
         }
     }
@@ -130,20 +138,22 @@ public class ProductView extends Main {
             productService.deleteById(event.getProduct().getId());
             updateList();
             closeEditor();
+            
+            // Notificação de sucesso
+            Notification notification = Notification.show("Produto excluído com sucesso!");
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         } catch (Exception e) {
-            // TODO: Implementar notificação de erro
+            // Notificação de erro
+            Notification notification = Notification.show("Erro ao excluir produto: " + e.getMessage());
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             e.printStackTrace();
         }
     }
 
     public void editProduct(Product product) {
-        if (product == null) {
-            closeEditor();
-        } else {
-            form.setProduct(product);
-            form.setVisible(true);
-            addClassName("editing");
-        }
+        form.setProduct(product);
+        form.setVisible(true);
+        addClassName("editing");
     }
 
     private void closeEditor() {
@@ -154,8 +164,8 @@ public class ProductView extends Main {
 
     private void addProduct() {
         grid.asSingleSelect().clear();
-        // Criar um produto vazio usando construtor protegido
-        editProduct(null); // PassarĂ¡ null para o form criar novo produto
+        // Abrir form para criar novo produto (null = novo produto)
+        editProduct(null);
     }
 
     private void updateList() {

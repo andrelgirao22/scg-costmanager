@@ -12,6 +12,8 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -133,8 +135,14 @@ public class ClientView extends Main {
             clientService.save(event.getClient());
             updateList();
             closeEditor();
+            
+            // Notificação de sucesso
+            Notification notification = Notification.show("Cliente salvo com sucesso!");
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         } catch (Exception e) {
-            // TODO: Implementar notificação de erro
+            // Notificação de erro
+            Notification notification = Notification.show("Erro ao salvar cliente: " + e.getMessage());
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             e.printStackTrace();
         }
     }
@@ -144,20 +152,22 @@ public class ClientView extends Main {
             clientService.deleteById(event.getClient().getId());
             updateList();
             closeEditor();
+            
+            // Notificação de sucesso
+            Notification notification = Notification.show("Cliente excluído com sucesso!");
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         } catch (Exception e) {
-            // TODO: Implementar notificação de erro
+            // Notificação de erro
+            Notification notification = Notification.show("Erro ao excluir cliente: " + e.getMessage());
+            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
             e.printStackTrace();
         }
     }
 
     public void editClient(Client client) {
-        if (client == null) {
-            closeEditor();
-        } else {
-            form.setClient(client);
-            form.setVisible(true);
-            addClassName("editing");
-        }
+        form.setClient(client);
+        form.setVisible(true);
+        addClassName("editing");
     }
 
     private void closeEditor() {
