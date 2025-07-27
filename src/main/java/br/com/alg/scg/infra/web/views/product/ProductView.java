@@ -46,6 +46,7 @@ public class ProductView extends Main {
         
         addClassName("product-view");
         setSizeFull();
+        getStyle().set("padding", "var(--lumo-space-l)");
         
         configureGrid();
         configureForm();

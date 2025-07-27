@@ -82,11 +82,19 @@ public class MainLayout extends AppLayout {
         // Clientes
         nav.addItem(new SideNavItem("Clientes", "/clients", VaadinIcon.USERS.create()));
 
-        // Vendas
-        nav.addItem(new SideNavItem("Vendas", "/sales", VaadinIcon.CART.create()));
+        // Vendas (com submenu)
+        SideNavItem salesMenu = new SideNavItem("Vendas");
+        salesMenu.setPrefixComponent(VaadinIcon.CART.create());
+        salesMenu.addItem(new SideNavItem("Nova", "/sale-operation"));
+        salesMenu.addItem(new SideNavItem("Histórico", "/sales"));
+        nav.addItem(salesMenu);
 
-        // Compras
-        nav.addItem(new SideNavItem("Compras", "/purchases", VaadinIcon.TRUCK.create()));
+        // Compras (com submenu)
+        SideNavItem purchasesMenu = new SideNavItem("Compras");
+        purchasesMenu.setPrefixComponent(VaadinIcon.TRUCK.create());
+        purchasesMenu.addItem(new SideNavItem("Nova", "/purchase-operation"));
+        purchasesMenu.addItem(new SideNavItem("Histórico", "/purchases"));
+        nav.addItem(purchasesMenu);
 
         return nav;
     }

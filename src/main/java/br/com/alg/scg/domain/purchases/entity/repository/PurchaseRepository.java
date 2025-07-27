@@ -3,6 +3,7 @@ package br.com.alg.scg.domain.purchases.entity.repository;
 import br.com.alg.scg.domain.purchases.entity.Purchase;
 import br.com.alg.scg.domain.purchases.entity.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,4 +26,15 @@ public interface PurchaseRepository extends JpaRepository<Purchase, UUID> {
      * Busca compras ordenadas por data (mais recentes primeiro)
      */
     List<Purchase> findAllByOrderByDateDesc();
+    
+    /**
+     * Busca todas as compras com fornecedor e itens carregados (fetch join)
+     * Para evitar problemas de LazyInitializationException
+     */
+    @Query("SELECT DISTINCT p FROM Purchase p " +
+           "LEFT JOIN FETCH p.supplier " +
+           "LEFT JOIN FETCH p.items i " +
+           "LEFT JOIN FETCH i.product " +
+           "ORDER BY p.date DESC")
+    List<Purchase> findAllWithRelations();
 }

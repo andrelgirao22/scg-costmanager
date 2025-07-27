@@ -47,6 +47,7 @@ public class ClientView extends Main {
         
         addClassName("client-view");
         setSizeFull();
+        getStyle().set("padding", "var(--lumo-space-l)");
         
         configureGrid();
         configureForm();

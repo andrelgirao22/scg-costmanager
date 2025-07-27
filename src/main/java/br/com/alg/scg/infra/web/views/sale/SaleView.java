@@ -31,6 +31,7 @@ public class SaleView extends Main {
         
         addClassName("sale-view");
         setSizeFull();
+        getStyle().set("padding", "var(--lumo-space-l)");
         
         configureGrid();
         add(createHeader(), createContent());

@@ -159,6 +159,17 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    public List<Product> findByType(ProductType type) {
+        if (type == null) {
+            throw new IllegalArgumentException("Tipo do produto não pode ser nulo");
+        }
+        List<Product> allProducts = findAll();
+        return allProducts.stream()
+                .filter(product -> product.getType() == type)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public boolean existsById(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("ID não pode ser nulo");

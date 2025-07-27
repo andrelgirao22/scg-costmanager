@@ -86,7 +86,7 @@ public class PurchaseService {
 
     @Transactional(readOnly = true)
     public List<Purchase> findAll() {
-        return purchaseRepository.findAll();
+        return purchaseRepository.findAllWithRelations();
     }
 
     @Transactional(readOnly = true)

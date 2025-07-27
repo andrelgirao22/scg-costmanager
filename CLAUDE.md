@@ -112,13 +112,43 @@ This project uses a pragmatic DDD approach where domain entities are also JPA pe
 - ✅ **Form Validation** - Client-side validation with error messages
 - 🎯 **Context Actions** - Save, delete, cancel operations
 - 📱 **Mobile-Friendly** - Drawer navigation for small screens
+- 🛒 **Purchase Operations** - Complete purchase creation with supplier management
+- 💰 **Sales Operations** - Sales creation interface (price calculation pending)
+- 📋 **Expandable Grids** - Detailed item views in purchase/sales history
+- ➕ **Inline Entity Creation** - Create suppliers/clients without leaving operation screens
+- 🎨 **Consistent Margins** - Standardized padding across all views
 
 ### **Available Routes:**
 - `/` or `/dashboard` - System overview and metrics
 - `/products` - Product management (CRUD)
 - `/clients` - Client management (CRUD)  
 - `/sales` - Sales history view
-- `/purchases` - Purchase history view
+- `/sale-operation` - Create new sales with price calculation
+- `/purchases` - Purchase history view (with expandable item details)
+- `/purchase-operation` - Create new purchases with supplier management
+
+## 🎯 **PRÓXIMAS TAREFAS PRIORITÁRIAS**
+
+### **Phase 6: Sales Operation Interface - IN PROGRESS**
+- [x] **🛒 Sales Operation View** - ✅ COMPLETED - Tela para gerar vendas com formação de preço
+  - [x] Criar SaleOperationView (/sale-operation) - Interface completa criada
+  - [x] Seleção de cliente com botão "Novo Cliente" (similar a compras)
+  - [x] Seleção de produtos finais com exibição de preço calculado
+  - [x] Grid de itens com quantidades e subtotais
+  - [x] Submenu Vendas: "Nova" e "Histórico" implementado
+  - [x] ClientDialog para cadastro de novos clientes com endereço
+  - [x] Interface responsiva com margins padronizadas
+  - [x] Validações de formulário e feedback visual
+  - [ ] Cálculo automático baseado em: custo ingredientes + margem de lucro (temporário implementado)
+  - [ ] Validação de estoque para matérias-primas necessárias
+  - [ ] Integração com SaleService para persistência
+
+- [ ] **💰 Price Calculation Engine** - Motor de cálculo de preços
+  - [ ] Implementar cálculo de custo baseado em receitas
+  - [ ] Buscar preços mais recentes das matérias-primas (últimas compras)
+  - [ ] Aplicar margem de lucro configurável por produto
+  - [ ] Exibir breakdown do preço (custo + margem = preço final)
+  - [ ] Cache de preços calculados para performance
 
 ### Next Development Tasks
 - [x] **Detailed DTO Validations** - ✅ COMPLETED - Jakarta Bean Validation implemented
@@ -128,6 +158,27 @@ This project uses a pragmatic DDD approach where domain entities are also JPA pe
   - [x] Address validation (@Pattern for CEP format)
   - [x] Supplier validation (@Pattern for CNPJ format)
   - [x] Controllers updated with @Valid annotations and manual validations removed
+
+- [x] **Purchase Operation Interface** - ✅ COMPLETED - Complete purchase creation interface
+  - [x] PurchaseOperationView with supplier selection and product management
+  - [x] Supplier creation dialog integrated
+  - [x] Real-time total calculation
+  - [x] Items grid with add/remove functionality
+  - [x] Purchase history with expandable item details
+  - [x] Submenu structure for purchases
+
+- [x] **Sales Operation Interface** - ✅ PARTIALLY COMPLETED - Sales creation interface
+  - [x] SaleOperationView (/sale-operation) with client selection
+  - [x] ClientDialog for creating new clients with complete address
+  - [x] Final products selection (ProductType.FINAL_PRODUCT)
+  - [x] Real-time price calculation display (temporary pricing)
+  - [x] Items grid with quantity, unit price, and subtotal
+  - [x] Submenu structure: "Nova" and "Histórico"
+  - [x] Form validations and visual feedback
+  - [x] Responsive design with standard margins
+  - [ ] **PENDING**: Real price calculation engine based on recipes + profit margin
+  - [ ] **PENDING**: Integration with SaleService for persistence
+  - [ ] **PENDING**: Stock validation for required raw materials
 
 - [ ] **Advanced Controller Operations** - Additional business endpoints:
   - [ ] Remove items from sales and purchases
