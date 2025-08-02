@@ -246,3 +246,72 @@ This project uses a pragmatic DDD approach where domain entities are also JPA pe
 - **ProductController**: CRUD de produtos (não define preços, apenas cadastra)
 - **PurchaseController**: Define preços das matérias-primas através das compras
 - **SaleController**: Registra vendas dos produtos finais pelos preços calculados
+
+## 📋 **Regras de Negócio: Cadastro e Cálculo de Custos**
+
+### **1. Cadastro de Matérias-Primas**
+- **Nome**: Cadastrar apenas o nome genérico (ex: "Chocolate em Barra", "Farinha de Trigo")
+- **NÃO incluir** peso ou quantidade no nome (❌ "Chocolate 2kg", ✅ "Chocolate em Barra")
+- **Tipo**: Sempre "Matéria-Prima"
+- **Estoque Inicial**: Geralmente 0 (será incrementado pelas compras)
+
+### **2. Modos de Compra na Interface**
+
+#### **Modo Unitário**
+**Quando usar:** Compras onde você já sabe o preço por unidade
+- **Exemplo**: Comprou farinha a R$ 5,00/kg
+- **Campos**:
+  - Quantidade: 10 (kg)
+  - Custo Unitário: R$ 5,00 (por kg)
+  - Subtotal: R$ 50,00 (calculado automaticamente)
+
+#### **Modo Por Embalagem** 
+**Quando usar:** Compras onde você pagou um valor total pela embalagem
+- **Exemplo**: Comprou 1 pacote de 2kg de chocolate por R$ 53,09
+- **Campos**:
+  - Qtd Embalagens: 1
+  - Unidades/Embalagem: 2 (kg)
+  - Custo da Embalagem: R$ 53,09
+  - **Sistema calcula**: R$ 53,09 ÷ 2kg = R$ 26,55/kg
+
+### **3. Fluxo de Cálculo Correto**
+
+#### **Exemplo Prático: Chocolate em Barra**
+1. **Cadastro**: 
+   - Nome: "Chocolate em Barra"
+   - Tipo: Matéria-Prima
+   - Estoque: 0 kg
+
+2. **Compra (Modo Por Embalagem)**:
+   - Produto: Chocolate em Barra
+   - Qtd Embalagens: 1
+   - Unidades/Embalagem: 2 kg
+   - Custo da Embalagem: R$ 53,09
+   - **Resultado**: Estoque = 2kg, Preço = R$ 26,55/kg
+
+3. **Receita do Brownie**:
+   - 200g Chocolate em Barra = 0,2kg × R$ 26,55/kg = R$ 5,31
+   - 150g Farinha = 0,15kg × R$ 5,00/kg = R$ 0,75
+   - **Custo Total**: R$ 6,06
+
+4. **Preço de Venda**:
+   - Custo R$ 6,06 + Margem 50% = **R$ 9,09**
+
+### **4. Regras Importantes**
+
+#### **❌ ERROS COMUNS:**
+- Cadastrar "Chocolate 2kg" como produto
+- No modo unitário, colocar valor total no campo "Custo Unitário"
+- Misturar unidades de medida (comprar em kg, usar receita em gramas sem conversão)
+
+#### **✅ PRÁTICAS CORRETAS:**
+- Um produto por tipo de matéria-prima (ex: "Açúcar Cristal", "Açúcar Refinado")
+- Usar **Modo Por Embalagem** quando comprar pacotes/caixas com preço total
+- Usar **Modo Unitário** quando souber o preço por unidade
+- Receitas sempre em unidades consistentes (gramas → kg na conversão)
+
+### **5. Vantagens do Sistema**
+- **Estoque Real**: Controla quantidade disponível de cada matéria-prima
+- **Preço Dinâmico**: Custo atualizado a cada nova compra
+- **Cálculo Automático**: Sistema calcula preço de venda baseado nos custos reais
+- **Histórico**: Mantém registro de todas as compras e preços pagos
