@@ -27,6 +27,8 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.BigDecimalField;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
@@ -55,9 +57,17 @@ public class PurchaseOperationView extends Main {
     private ComboBox<Supplier> supplierComboBox;
     private DatePicker purchaseDatePicker;
     private ComboBox<Product> productComboBox;
-    private BigDecimalField quantityField;
+    private RadioButtonGroup<String> pricingModeGroup;
+    private NumberField quantityField;
     private ComboBox<UnitMeasurement> unitMeasurementComboBox;
-    private BigDecimalField unitCostField;
+    private NumberField unitCostField;
+    
+    // Campos para modo embalagem
+    private NumberField packagesQuantityField;
+    private NumberField unitsPerPackageField;
+    private NumberField packageCostField;
+    private Span calculatedUnitCostLabel;
+    
     private Button addItemButton;
     private Grid<PurchaseItemData> itemsGrid;
     private Span totalLabel;
@@ -96,13 +106,12 @@ public class PurchaseOperationView extends Main {
         VerticalLayout content = new VerticalLayout();
         content.setSizeFull();
         content.setPadding(false);
-        content.setSpacing(true);
+        content.setSpacing(false);
+        content.addClassName(LumoUtility.Gap.MEDIUM);
 
         content.add(
             createPurchaseInfoSection(),
-            new Hr(),
             createItemsSection(),
-            new Hr(),
             createTotalSection(),
             createButtonsSection()
         );
@@ -164,38 +173,94 @@ public class PurchaseOperationView extends Main {
     private Component createItemForm() {
         VerticalLayout formLayout = new VerticalLayout();
         formLayout.setPadding(false);
-        formLayout.setSpacing(true);
+        formLayout.setSpacing(false);
+        formLayout.addClassName(LumoUtility.Gap.SMALL);
 
+        // Seleção de produto
         productComboBox = new ComboBox<>("Produto");
         productComboBox.setItemLabelGenerator(Product::getName);
-        productComboBox.setWidthFull();
+        productComboBox.setWidth("400px");
 
-        quantityField = new BigDecimalField("Quantidade");
-        quantityField.setValue(BigDecimal.ONE);
+        // Modo de precificação
+        pricingModeGroup = new RadioButtonGroup<>("Modo de Precificação");
+        pricingModeGroup.setItems("Custo Unitário", "Por Embalagem");
+        pricingModeGroup.setValue("Custo Unitário");
+        pricingModeGroup.addValueChangeListener(e -> togglePricingMode());
+
+        // Campos modo unitário
+        quantityField = new NumberField("Quantidade");
+        quantityField.setValue(1.0);
+        quantityField.setMin(0.0);
+        quantityField.setStep(0.01);
+        quantityField.setWidth("120px");
 
         unitMeasurementComboBox = new ComboBox<>("Unidade");
         unitMeasurementComboBox.setItems(UnitMeasurement.values());
         unitMeasurementComboBox.setItemLabelGenerator(UnitMeasurement::getUnit);
         unitMeasurementComboBox.setValue(UnitMeasurement.KILOGRAM);
+        unitMeasurementComboBox.setWidth("120px");
 
-        unitCostField = new BigDecimalField("Custo Unitário (R$)");
+        unitCostField = new NumberField("Custo Unitário (R$)");
         unitCostField.setPrefixComponent(new Span("R$"));
+        unitCostField.setMin(0.0);
+        unitCostField.setStep(0.01);
+
+        // Campos modo embalagem
+        packagesQuantityField = new NumberField("Qtd Embalagens");
+        packagesQuantityField.setValue(1.0);
+        packagesQuantityField.setMin(0.0);
+        packagesQuantityField.setStep(0.01);
+        packagesQuantityField.setWidth("140px");
+        packagesQuantityField.setVisible(false);
+
+        unitsPerPackageField = new NumberField("Unidades/Embalagem");
+        unitsPerPackageField.setValue(1.0);
+        unitsPerPackageField.setMin(0.0);
+        unitsPerPackageField.setStep(0.01);
+        unitsPerPackageField.setWidth("160px");
+        unitsPerPackageField.setVisible(false);
+        unitsPerPackageField.addValueChangeListener(e -> calculateUnitCost());
+
+        packageCostField = new NumberField("Custo da Embalagem (R$)");
+        packageCostField.setPrefixComponent(new Span("R$"));
+        packageCostField.setMin(0.0);
+        packageCostField.setStep(0.01);
+        packageCostField.setWidth("180px");
+        packageCostField.setVisible(false);
+        packageCostField.addValueChangeListener(e -> calculateUnitCost());
+
+        calculatedUnitCostLabel = new Span("Custo Unit. Calculado: R$ 0,00");
+        calculatedUnitCostLabel.addClassName(LumoUtility.FontSize.SMALL);
+        calculatedUnitCostLabel.addClassName(LumoUtility.TextColor.SECONDARY);
+        calculatedUnitCostLabel.setVisible(false);
 
         addItemButton = new Button("Adicionar Item");
         addItemButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        HorizontalLayout fieldsRow1 = new HorizontalLayout(productComboBox, quantityField);
-        fieldsRow1.setWidthFull();
-        fieldsRow1.setFlexGrow(2, productComboBox);
-        fieldsRow1.setFlexGrow(1, quantityField);
+        // Layout compacto e organizado
+        HorizontalLayout productAndModeRow = new HorizontalLayout();
+        productAndModeRow.setAlignItems(HorizontalLayout.Alignment.END);
+        productAndModeRow.setSpacing(true);
+        productAndModeRow.add(productComboBox, pricingModeGroup);
 
-        HorizontalLayout fieldsRow2 = new HorizontalLayout(unitMeasurementComboBox, unitCostField, addItemButton);
-        fieldsRow2.setWidthFull();
-        fieldsRow2.setAlignItems(HorizontalLayout.Alignment.END);
-        fieldsRow2.setFlexGrow(1, unitMeasurementComboBox);
-        fieldsRow2.setFlexGrow(2, unitCostField);
+        // Campos modo unitário - linha compacta
+        HorizontalLayout unitaryFieldsRow = new HorizontalLayout();
+        unitaryFieldsRow.setAlignItems(HorizontalLayout.Alignment.END);
+        unitaryFieldsRow.setSpacing(true);
+        unitaryFieldsRow.add(quantityField, unitMeasurementComboBox, unitCostField, addItemButton);
 
-        formLayout.add(fieldsRow1, fieldsRow2);
+        // Campos modo embalagem - linha compacta
+        HorizontalLayout packageFieldsRow = new HorizontalLayout();
+        packageFieldsRow.setAlignItems(HorizontalLayout.Alignment.END);
+        packageFieldsRow.setSpacing(true);
+        packageFieldsRow.add(packagesQuantityField, unitsPerPackageField, packageCostField, calculatedUnitCostLabel, addItemButton);
+
+        formLayout.add(
+            productAndModeRow,
+            unitaryFieldsRow,
+            packageFieldsRow
+        );
+        
         return formLayout;
     }
 
@@ -290,13 +355,78 @@ public class PurchaseOperationView extends Main {
         showSuccess("Fornecedor " + supplier.getName() + " criado e selecionado!");
     }
 
+    private void togglePricingMode() {
+        boolean isPackageMode = "Por Embalagem".equals(pricingModeGroup.getValue());
+        
+        // Mostrar/esconder campos do modo unitário
+        quantityField.setVisible(!isPackageMode);
+        unitCostField.setVisible(!isPackageMode);
+        
+        // Mostrar/esconder campos do modo embalagem
+        packagesQuantityField.setVisible(isPackageMode);
+        unitsPerPackageField.setVisible(isPackageMode);
+        packageCostField.setVisible(isPackageMode);
+        calculatedUnitCostLabel.setVisible(isPackageMode);
+        
+        // Limpar campos ao trocar de modo
+        if (isPackageMode) {
+            unitCostField.clear();
+            packagesQuantityField.setValue(1.0);
+            unitsPerPackageField.setValue(1.0);
+            packageCostField.clear();
+        } else {
+            quantityField.setValue(1.0);
+            unitCostField.clear();
+        }
+        
+        calculateUnitCost();
+    }
+
+    private void calculateUnitCost() {
+        if ("Por Embalagem".equals(pricingModeGroup.getValue())) {
+            Double packageCost = packageCostField.getValue();
+            Double unitsPerPackage = unitsPerPackageField.getValue();
+            
+            if (packageCost != null && unitsPerPackage != null && unitsPerPackage > 0) {
+                BigDecimal packageCostBD = BigDecimal.valueOf(packageCost);
+                BigDecimal unitsPerPackageBD = BigDecimal.valueOf(unitsPerPackage);
+                
+                BigDecimal unitCost = packageCostBD.divide(unitsPerPackageBD, 4, RoundingMode.HALF_UP);
+                calculatedUnitCostLabel.setText("Custo Unit. Calculado: R$ " + 
+                    unitCost.setScale(4, RoundingMode.HALF_UP));
+            } else {
+                calculatedUnitCostLabel.setText("Custo Unit. Calculado: R$ 0,00");
+            }
+        }
+    }
+
     private void addItem() {
         if (validateItemForm()) {
+            BigDecimal quantity, unitCost;
+            
+            if ("Por Embalagem".equals(pricingModeGroup.getValue())) {
+                // Modo embalagem: calcular quantidade total e custo unitário
+                Double packagesQty = packagesQuantityField.getValue();
+                Double unitsPerPackage = unitsPerPackageField.getValue();
+                Double packageCost = packageCostField.getValue();
+                
+                BigDecimal packagesQtyBD = BigDecimal.valueOf(packagesQty);
+                BigDecimal unitsPerPackageBD = BigDecimal.valueOf(unitsPerPackage);
+                BigDecimal packageCostBD = BigDecimal.valueOf(packageCost);
+                
+                quantity = packagesQtyBD.multiply(unitsPerPackageBD);
+                unitCost = packageCostBD.divide(unitsPerPackageBD, 4, RoundingMode.HALF_UP);
+            } else {
+                // Modo unitário: usar valores diretos
+                quantity = BigDecimal.valueOf(quantityField.getValue());
+                unitCost = BigDecimal.valueOf(unitCostField.getValue());
+            }
+            
             PurchaseItemData item = new PurchaseItemData(
                 productComboBox.getValue(),
-                quantityField.getValue(),
+                quantity,
                 unitMeasurementComboBox.getValue(),
-                unitCostField.getValue()
+                unitCost
             );
             
             purchaseItems.add(item);
@@ -311,18 +441,38 @@ public class PurchaseOperationView extends Main {
             showError("Selecione um produto");
             return false;
         }
-        if (quantityField.getValue() == null || quantityField.getValue().compareTo(BigDecimal.ZERO) <= 0) {
-            showError("Informe uma quantidade válida");
-            return false;
-        }
+        
         if (unitMeasurementComboBox.getValue() == null) {
             showError("Selecione uma unidade de medida");
             return false;
         }
-        if (unitCostField.getValue() == null || unitCostField.getValue().compareTo(BigDecimal.ZERO) <= 0) {
-            showError("Informe um custo unitário válido");
-            return false;
+        
+        if ("Por Embalagem".equals(pricingModeGroup.getValue())) {
+            // Validações para modo embalagem
+            if (packagesQuantityField.getValue() == null || packagesQuantityField.getValue() <= 0) {
+                showError("Informe uma quantidade de embalagens válida");
+                return false;
+            }
+            if (unitsPerPackageField.getValue() == null || unitsPerPackageField.getValue() <= 0) {
+                showError("Informe a quantidade de unidades por embalagem");
+                return false;
+            }
+            if (packageCostField.getValue() == null || packageCostField.getValue() <= 0) {
+                showError("Informe o custo da embalagem");
+                return false;
+            }
+        } else {
+            // Validações para modo unitário
+            if (quantityField.getValue() == null || quantityField.getValue() <= 0) {
+                showError("Informe uma quantidade válida");
+                return false;
+            }
+            if (unitCostField.getValue() == null || unitCostField.getValue() <= 0) {
+                showError("Informe um custo unitário válido");
+                return false;
+            }
         }
+        
         return true;
     }
 
@@ -338,9 +488,21 @@ public class PurchaseOperationView extends Main {
 
     private void clearItemForm() {
         productComboBox.clear();
-        quantityField.setValue(BigDecimal.ONE);
         unitMeasurementComboBox.setValue(UnitMeasurement.KILOGRAM);
+        
+        // Limpar campos do modo unitário
+        quantityField.setValue(1.0);
         unitCostField.clear();
+        
+        // Limpar campos do modo embalagem
+        packagesQuantityField.setValue(1.0);
+        unitsPerPackageField.setValue(1.0);
+        packageCostField.clear();
+        calculatedUnitCostLabel.setText("Custo Unit. Calculado: R$ 0,00");
+        
+        // Resetar para modo unitário
+        pricingModeGroup.setValue("Custo Unitário");
+        togglePricingMode();
     }
 
     private void updateTotal() {

@@ -5,6 +5,7 @@ public enum UnitMeasurement {
     GRAMA("g"),
     KILOGRAM("kg"),
     UNIT("un"),
+    PAC("pac"),
     LITRO("L"),
     MILILITRO("ml");
 
