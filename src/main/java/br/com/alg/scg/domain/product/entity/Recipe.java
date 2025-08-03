@@ -11,6 +11,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,8 +30,17 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private final List<RecipeIngredient> ingredients = new ArrayList<>();
 
+    @Column(name = "yield_quantity", precision = 10, scale = 3)
+    private BigDecimal yieldQuantity;
+
     public Recipe() {
         this.id = UuidCreator.getTimeOrderedEpoch();
+        this.yieldQuantity = BigDecimal.ONE; // Default: 1 unidade
+    }
+
+    public Recipe(BigDecimal yieldQuantity) {
+        this.id = UuidCreator.getTimeOrderedEpoch();
+        this.yieldQuantity = yieldQuantity != null ? yieldQuantity : BigDecimal.ONE;
     }
 
     public void addIngredient(Product rawMaterial, Quantity quantity) {
@@ -42,6 +52,33 @@ public class Recipe {
             throw new IllegalArgumentException("Ingrediente já existe na receita.");
         }
         this.ingredients.add(new RecipeIngredient(rawMaterial.getId(), quantity, this));
+    }
+
+    public void updateIngredient(UUID rawMaterialId, Quantity newQuantity) {
+        RecipeIngredient existingIngredient = ingredients.stream()
+                .filter(i -> i.getRawMaterialId().equals(rawMaterialId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Ingrediente não encontrado na receita"));
+        
+        // Remove o ingrediente existente
+        ingredients.remove(existingIngredient);
+        
+        // Adiciona com a nova quantidade
+        this.ingredients.add(new RecipeIngredient(rawMaterialId, newQuantity, this));
+    }
+
+    public void removeIngredient(UUID rawMaterialId) {
+        RecipeIngredient ingredientToRemove = ingredients.stream()
+                .filter(i -> i.getRawMaterialId().equals(rawMaterialId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Ingrediente não encontrado na receita"));
+        
+        this.ingredients.remove(ingredientToRemove);
+    }
+
+    public boolean hasIngredient(UUID rawMaterialId) {
+        return ingredients.stream()
+                .anyMatch(i -> i.getRawMaterialId().equals(rawMaterialId));
     }
 
     /**
@@ -72,6 +109,29 @@ public class Recipe {
         }
 
         return totalCost;
+    }
+
+    /**
+     * Calcula o custo unitário da receita (custo total ÷ rendimento).
+     * Ex: Receita de brownie custa R$ 14,45 e rende 7 unidades = R$ 2,06 por unidade
+     */
+    public Money calcUnitCost(ProductRepository productRepository) {
+        Money totalCost = calcTotalCost(productRepository);
+        if (yieldQuantity == null || yieldQuantity.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalStateException("Rendimento da receita deve ser maior que zero");
+        }
+        return new Money(totalCost.value().divide(yieldQuantity, 2, RoundingMode.HALF_UP));
+    }
+
+    public void setYieldQuantity(BigDecimal yieldQuantity) {
+        if (yieldQuantity != null && yieldQuantity.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Rendimento deve ser maior que zero");
+        }
+        this.yieldQuantity = yieldQuantity != null ? yieldQuantity : BigDecimal.ONE;
+    }
+
+    public BigDecimal getYieldQuantity() {
+        return yieldQuantity != null ? yieldQuantity : BigDecimal.ONE;
     }
 
     public UUID getId() {

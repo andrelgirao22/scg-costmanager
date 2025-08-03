@@ -343,4 +343,13 @@ public class ProductService {
 
         return product.getStock().compareTo(requiredQuantity) >= 0;
     }
+
+    // ==================== REPOSITORY ACCESS ====================
+
+    /**
+     * Expõe o repositório para cálculos de receitas que precisam acessar preços de matérias-primas
+     */
+    public ProductRepository getProductRepository() {
+        return productRepository;
+    }
 }

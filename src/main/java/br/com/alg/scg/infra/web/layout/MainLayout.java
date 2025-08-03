@@ -76,8 +76,13 @@ public class MainLayout extends AppLayout {
         // Dashboard
         nav.addItem(new SideNavItem("Dashboard", "/dashboard", VaadinIcon.DASHBOARD.create()));
 
-        // Produtos
-        nav.addItem(new SideNavItem("Produtos", "/products", VaadinIcon.PACKAGE.create()));
+        // Produtos (com submenu)
+        SideNavItem productsMenu = new SideNavItem("Produtos");
+        productsMenu.setPrefixComponent(VaadinIcon.PACKAGE.create());
+        productsMenu.addItem(new SideNavItem("Matérias-Primas", "/raw-materials"));
+        productsMenu.addItem(new SideNavItem("Produtos Finais", "/final-products"));
+        productsMenu.addItem(new SideNavItem("Receitas", "/recipes"));
+        nav.addItem(productsMenu);
 
         // Clientes
         nav.addItem(new SideNavItem("Clientes", "/clients", VaadinIcon.USERS.create()));

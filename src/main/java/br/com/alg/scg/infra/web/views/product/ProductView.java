@@ -32,7 +32,7 @@ import static br.com.alg.scg.infra.web.views.components.ComponentUtil.createConf
  * View para gerenciamento de produtos
  */
 @PageTitle("Produtos")
-@Route(value = "products", layout = MainLayout.class)
+@Route(value = "/products", layout = MainLayout.class)
 public class ProductView extends Main {
 
     private final ProductService productService;
