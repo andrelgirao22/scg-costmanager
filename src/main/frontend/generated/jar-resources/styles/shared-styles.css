@@ -1,0 +1,193 @@
+/* SCG Cost Manager - Estilos customizados */
+
+/* Layout principal */
+.main-layout {
+    --lumo-primary-color: #1976D2;
+    --lumo-primary-color-50pct: rgba(25, 118, 210, 0.5);
+    --lumo-primary-color-10pct: rgba(25, 118, 210, 0.1);
+}
+
+/* Navegação principal */
+.main-nav {
+    --lumo-contrast-5pct: rgba(0, 0, 0, 0.02);
+}
+
+/* Dashboard cards */
+.stat-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--lumo-box-shadow-m);
+}
+
+/* Grid customizations */
+.product-grid,
+.client-grid,
+.sale-grid,
+.purchase-grid {
+    --lumo-contrast-5pct: rgba(0, 0, 0, 0.02);
+}
+
+/* Form customizations */
+.product-form,
+.client-form {
+    background: var(--lumo-contrast-5pct);
+    border-radius: var(--lumo-border-radius-m);
+    padding: var(--lumo-space-l);
+}
+
+/* Toolbar styling */
+.toolbar {
+    background: var(--lumo-contrast-5pct);
+    border-radius: var(--lumo-border-radius-m);
+    padding: var(--lumo-space-m);
+    margin-bottom: var(--lumo-space-m);
+}
+
+/* Status badges */
+vaadin-grid-cell-content [theme~='badge'] {
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--lumo-border-radius-s);
+    font-size: var(--lumo-font-size-s);
+    font-weight: 500;
+    height: calc(var(--lumo-size-s) * 0.7);
+    padding: 0 calc(var(--lumo-size-s) * 0.375);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    min-width: 0;
+}
+
+vaadin-grid-cell-content [theme~='badge'][theme~='success'] {
+    color: var(--lumo-success-contrast-color);
+    background-color: var(--lumo-success-color);
+}
+
+vaadin-grid-cell-content [theme~='badge'][theme~='error'] {
+    color: var(--lumo-error-contrast-color);
+    background-color: var(--lumo-error-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .stat-card {
+        margin-bottom: var(--lumo-space-m);
+    }
+    
+    .toolbar {
+        flex-direction: column;
+        gap: var(--lumo-space-s);
+    }
+    
+    .toolbar > * {
+        width: 100%;
+    }
+}
+
+/* Content area */
+.content {
+    gap: var(--lumo-space-m);
+    padding: var(--lumo-space-m);
+}
+
+/* Charts section placeholder */
+.charts-section {
+    margin-top: var(--lumo-space-l);
+}
+
+/* Editing state for views */
+.product-view.editing,
+.client-view.editing {
+    --content-columns: 1fr 1fr;
+}
+
+@media (max-width: 1024px) {
+    .product-view.editing .content,
+    .client-view.editing .content {
+        flex-direction: column;
+    }
+    
+    .product-view.editing .product-form,
+    .client-view.editing .client-form {
+        max-width: none;
+        width: 100%;
+    }
+}
+
+/* Ícones de cores personalizadas */
+.text-primary {
+    color: var(--lumo-primary-color) !important;
+}
+
+.text-success {
+    color: var(--lumo-success-color) !important;
+}
+
+.text-contrast {
+    color: var(--lumo-contrast-color) !important;
+}
+
+.text-error {
+    color: var(--lumo-error-color) !important;
+}
+
+/* --- Melhorias no Dashboard --- */
+
+.dashboard-view .stats-board {
+    gap: var(--lumo-space-l);
+    padding: var(--lumo-space-l);
+}
+
+.stat-card {
+    /* O efeito de hover e transição já estava bom, mantivemos */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: var(--lumo-box-shadow-s); /* Sombra sutil por padrão */
+    padding: var(--lumo-space-s);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--lumo-box-shadow-xl); /* Sombra mais pronunciada no hover */
+}
+
+/* Wrapper do ícone no card */
+.stat-card-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%; /* Círculo perfeito */
+    flex-shrink: 0; /* Impede que o círculo se achate */
+}
+
+.stat-card-icon-wrapper > vaadin-icon {
+    font-size: 32px; /* Ícone maior */
+}
+
+/* Cores de fundo claras para o wrapper do ícone */
+.bg-primary-light {
+    background-color: var(--lumo-primary-color-10pct);
+}
+.bg-success-light {
+    background-color: var(--lumo-success-color-10pct);
+}
+.bg-contrast-light {
+    background-color: var(--lumo-contrast-10pct);
+}
+.bg-error-light {
+    background-color: var(--lumo-error-color-10pct);
+}
+
+/* Cores do ícone (já existentes, mas garantindo que funcionem bem com o fundo) */
+.text-primary { color: var(--lumo-primary-text-color); }
+.text-success { color: var(--lumo-success-text-color); }
+.text-contrast { color: var(--lumo-contrast-90pct); }
+.text-error { color: var(--lumo-error-text-color); }
+
+/* Seção de gráficos */
+.charts-section {
+    width: 100%;
+}

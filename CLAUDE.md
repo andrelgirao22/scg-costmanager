@@ -18,6 +18,7 @@ SCG Cost Manager is a bakery cost management system specialized in brownies, bui
 - **JPA/Hibernate** for persistence
 - **Flyway** for database migrations
 - **MariaDB** database
+
 - **Maven** for dependency management
 - **JUnit 5** for testing
 
@@ -49,9 +50,11 @@ SCG Cost Manager is a bakery cost management system specialized in brownies, bui
 mvn clean install
 mvn spring-boot:run
 
-# Tests
-mvn test
-mvn test jacoco:report
+# Tests (SEMPRE usar H2 para testes, não MariaDB)
+mvn test -Dspring.profiles.active=test
+mvn test jacoco:report -Dspring.profiles.active=test
+
+# IMPORTANTE: Testes devem usar H2 em memória, nunca MariaDB
 ```
 
 ## Key Business Rules
