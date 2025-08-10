@@ -98,14 +98,14 @@ public class Recipe {
             Product rawMaterial = productRepository.findById(recipeIngredient.getRawMaterialId())
                     .orElseThrow(() -> new IllegalStateException("Matéria-prima não encontrada: " + recipeIngredient.getRawMaterialId()));
 
-            Money priceRawMaterial = rawMaterial.getCurrentPrice()
-                    .orElseThrow(() -> new IllegalStateException("Matéria-prima sem preço definido: " + rawMaterial.getName()));
+            if (rawMaterial.getCurrentPrice().isEmpty()) {
+                throw new IllegalStateException("Matéria-prima sem preço definido: " + rawMaterial.getName() + 
+                    ". É necessário registrar uma compra para definir o preço desta matéria-prima.");
+            }
 
-            //TODO: Aqui precisaria de uma lógica de conversão de unidades
-            // Ex: Se o preço é por KG e a receita usa GRAMA
-            BigDecimal quantityInRecipe = recipeIngredient.getQuantity().value();
-
-            totalCost = totalCost.sum(priceRawMaterial.multiply(quantityInRecipe));
+            // Usar o novo método que faz conversão automática de unidades
+            Money ingredientCost = rawMaterial.calculateIngredientCost(recipeIngredient.getQuantity());
+            totalCost = totalCost.sum(ingredientCost);
         }
 
         return totalCost;

@@ -6,6 +6,7 @@ import br.com.alg.scg.domain.product.entity.Product;
 import br.com.alg.scg.domain.product.entity.Recipe;
 import br.com.alg.scg.domain.product.repository.ProductRepository;
 import br.com.alg.scg.domain.product.valueobject.ProductType;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -17,9 +18,10 @@ public class SalePriceCalculatorService {
         this.productRepository = productRepository;
     }
 
+    @Transactional(readOnly = true)
     public Money salePriceCalcule(Product product) {
         if(product.getType() != ProductType.FINAL_PRODUCT) {
-            throw new IllegalArgumentException("Cálculo de preço de venda é aplicável apneas a produtos finais.");
+            throw new IllegalArgumentException("Cálculo de preço de venda é aplicável apenas a produtos finais.");
         }
 
         Recipe recipe = product.getProductRecipe()
@@ -30,10 +32,11 @@ public class SalePriceCalculatorService {
             throw new IllegalStateException("Produto final deve ter uma margem de lucro definida.");
         }
 
-        Money productionCost = recipe.calcTotalCost(productRepository);
+        // Como está dentro de @Transactional, a sessão permanece ativa
+        Money unitCost = recipe.calcUnitCost(productRepository);
 
         BigDecimal marginFactor = BigDecimal.ONE.add(profitMargin.percent());
 
-        return productionCost.multiply(marginFactor);
+        return unitCost.multiply(marginFactor);
     }
 }

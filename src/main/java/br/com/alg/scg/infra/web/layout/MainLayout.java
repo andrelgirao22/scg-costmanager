@@ -82,6 +82,7 @@ public class MainLayout extends AppLayout {
         productsMenu.addItem(new SideNavItem("Matérias-Primas", "/raw-materials"));
         productsMenu.addItem(new SideNavItem("Produtos Finais", "/final-products"));
         productsMenu.addItem(new SideNavItem("Receitas", "/recipes"));
+        productsMenu.addItem(new SideNavItem("Formação de Preços", "/price-formation"));
         nav.addItem(productsMenu);
 
         // Clientes

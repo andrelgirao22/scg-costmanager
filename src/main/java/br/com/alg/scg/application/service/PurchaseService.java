@@ -175,6 +175,17 @@ public class PurchaseService {
         // Atualizar estoque do produto
         productService.increaseStock(product.getId(), quantity.value());
         
+        // Definir unidade se for primeira compra (buscar produto atualizado)
+        Product updatedProduct = productService.findById(product.getId())
+                .orElseThrow(() -> new IllegalStateException("Produto não encontrado"));
+        if (updatedProduct.getStockUnit() == null) {
+            productService.setStockUnit(product.getId(), quantity.unitMeasurement());
+        }
+        
+        // IMPORTANTE: Registrar o preço unitário no histórico de preços com a unidade
+        // Isso é essencial para o cálculo de custos na formação de preços
+        productService.addPrice(product.getId(), unitPrice, quantity.unitMeasurement());
+        
         return savedPurchase;
     }
 
@@ -263,9 +274,25 @@ public class PurchaseService {
 
     // ==================== PRIVATE HELPER METHODS ====================
 
+    /**
+     * Atualiza o estoque dos produtos comprados E registra os preços de compra
+     * no histórico de preços para cálculo de custos.
+     */
     private void updateProductStock(List<PurchaseItem> items) {
         for (PurchaseItem item : items) {
+            // Aumenta o estoque
             productService.increaseStock(item.getProduct().getId(), item.getQuantity().value());
+            
+            // Define unidade do estoque na primeira compra (verificar produto atualizado)
+            Product currentProduct = productService.findById(item.getProduct().getId())
+                    .orElseThrow(() -> new IllegalStateException("Produto não encontrado"));
+            if (currentProduct.getStockUnit() == null) {
+                productService.setStockUnit(item.getProduct().getId(), item.getQuantity().unitMeasurement());
+            }
+            
+            // IMPORTANTE: Registra o preço unitário da compra no histórico de preços com unidade
+            // Isso é essencial para o cálculo de custos na formação de preços
+            productService.addPrice(item.getProduct().getId(), item.getUnitCost(), item.getQuantity().unitMeasurement());
         }
     }
 

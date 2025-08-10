@@ -2,6 +2,7 @@ package br.com.alg.scg.application.service;
 
 import br.com.alg.scg.domain.common.valueobject.Money;
 import br.com.alg.scg.domain.common.valueobject.Quantity;
+import br.com.alg.scg.domain.common.valueobject.UnitMeasurement;
 import br.com.alg.scg.domain.finance.valueobject.ProfitMargin;
 import br.com.alg.scg.domain.product.entity.Product;
 import br.com.alg.scg.domain.product.entity.Recipe;
@@ -145,6 +146,39 @@ public class ProductService {
         return products;
     }
 
+    /**
+     * Busca todos os produtos finais com receitas e histórico de preços carregados
+     * para evitar LazyInitializationException na interface de formação de preços
+     */
+    @Transactional(readOnly = true)
+    public List<Product> findAllFinalProductsWithDependencies() {
+        return productRepository.findAllWithRecipesByType(ProductType.FINAL_PRODUCT);
+    }
+
+    /**
+     * Calcula o custo unitário de uma receita usando este service
+     * para resolver dependências lazy sem LazyInitializationException
+     */
+    @Transactional(readOnly = true)
+    public Money calculateRecipeUnitCost(Recipe recipe) {
+        if (recipe == null) {
+            throw new IllegalArgumentException("Receita não pode ser nula");
+        }
+        return recipe.calcUnitCost(productRepository);
+    }
+
+    /**
+     * Calcula o custo total de uma receita usando este service
+     * para resolver dependências lazy sem LazyInitializationException
+     */
+    @Transactional(readOnly = true)
+    public Money calculateRecipeTotalCost(Recipe recipe) {
+        if (recipe == null) {
+            throw new IllegalArgumentException("Receita não pode ser nula");
+        }
+        return recipe.calcTotalCost(productRepository);
+    }
+
     @Transactional(readOnly = true)
     public List<Product> findByNameContainingIgnoreCase(String nameFragment) {
         if (nameFragment == null || nameFragment.trim().isEmpty()) {
@@ -218,6 +252,25 @@ public class ProductService {
     }
 
     @Transactional
+    public Product addPrice(UUID productId, Money price, UnitMeasurement unitMeasurement) {
+        if (productId == null) {
+            throw new IllegalArgumentException("ID do produto não pode ser nulo");
+        }
+        if (price == null) {
+            throw new IllegalArgumentException("Preço não pode ser nulo");
+        }
+        if (unitMeasurement == null) {
+            throw new IllegalArgumentException("Unidade de medida não pode ser nula");
+        }
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com ID: " + productId));
+
+        product.addPrice(price, unitMeasurement);
+        return productRepository.save(product);
+    }
+
+    @Transactional
     public Product increaseStock(UUID productId, BigDecimal quantity) {
         if (productId == null) {
             throw new IllegalArgumentException("ID do produto não pode ser nulo");
@@ -230,6 +283,22 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com ID: " + productId));
 
         product.increaseStock(quantity);
+        return productRepository.save(product);
+    }
+
+    @Transactional
+    public Product setStockUnit(UUID productId, UnitMeasurement stockUnit) {
+        if (productId == null) {
+            throw new IllegalArgumentException("ID do produto não pode ser nulo");
+        }
+        if (stockUnit == null) {
+            throw new IllegalArgumentException("Unidade de estoque não pode ser nula");
+        }
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado com ID: " + productId));
+
+        product.setStockUnit(stockUnit);
         return productRepository.save(product);
     }
 

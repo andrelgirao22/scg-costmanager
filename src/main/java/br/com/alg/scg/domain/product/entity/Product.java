@@ -1,6 +1,9 @@
 package br.com.alg.scg.domain.product.entity;
 
 import br.com.alg.scg.domain.common.valueobject.Money;
+import br.com.alg.scg.domain.common.valueobject.Quantity;
+import br.com.alg.scg.domain.common.valueobject.UnitConverter;
+import br.com.alg.scg.domain.common.valueobject.UnitMeasurement;
 import br.com.alg.scg.domain.finance.valueobject.ProfitMargin;
 import br.com.alg.scg.domain.product.valueobject.ProductType;
 
@@ -35,6 +38,10 @@ public class Product {
     @Column(precision = 10, scale = 3)
     private BigDecimal stock;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "stock_unit", length = 20)
+    private UnitMeasurement stockUnit;
+
     @Embedded
     @AttributeOverride(name = "percent", column = @Column(name = "profit_margin_percent"))
     private ProfitMargin profitMargin;
@@ -62,6 +69,8 @@ public class Product {
         if (this.stock == null) {
             this.stock = BigDecimal.ZERO;
         }
+        // Removido: não definir stockUnit automaticamente
+        // A unidade deve ser definida na primeira compra
     }
 
     // Setters para binding de formulários
@@ -77,12 +86,30 @@ public class Product {
         this.stock = stock != null ? stock : BigDecimal.ZERO;
     }
 
+    public void setStockUnit(UnitMeasurement stockUnit) {
+        if (this.type != ProductType.RAW_MATERIAL) {
+            throw new IllegalStateException("Apenas matérias-primas têm unidade de estoque.");
+        }
+        this.stockUnit = stockUnit;
+    }
+
     public static Product createRawMaterial(String name, BigDecimal initStock) {
         var product = new Product();
         product.id = UuidCreator.getTimeOrderedEpoch();
         product.name = name;
         product.type = ProductType.RAW_MATERIAL;
         product.stock = initStock;
+        product.stockUnit = UnitMeasurement.KILOGRAM; // Padrão: kg
+        return product;
+    }
+
+    public static Product createRawMaterial(String name, BigDecimal initStock, UnitMeasurement stockUnit) {
+        var product = new Product();
+        product.id = UuidCreator.getTimeOrderedEpoch();
+        product.name = name;
+        product.type = ProductType.RAW_MATERIAL;
+        product.stock = initStock;
+        product.stockUnit = stockUnit;
         return product;
     }
 
@@ -116,10 +143,21 @@ public class Product {
         this.pricesHistory.add(new Price(newPrice, effectiveDate, this));
     }
 
+    public void addPrice(Money newPrice, UnitMeasurement unitMeasurement) {
+        Objects.requireNonNull(newPrice, "O preço não pode ser nulo.");
+        Objects.requireNonNull(unitMeasurement, "A unidade de medida não pode ser nula.");
+        this.pricesHistory.add(new Price(newPrice, unitMeasurement, LocalDateTime.now(), this));
+    }
+
     public Optional<Money> getCurrentPrice() {
         return pricesHistory.stream()
                 .max((p1, p2) -> p1.getEffectiveDate().compareTo(p2.getEffectiveDate()))
                 .map(Price::getValue);
+    }
+
+    public Optional<Price> getCurrentPriceDetails() {
+        return pricesHistory.stream()
+                .max((p1, p2) -> p1.getEffectiveDate().compareTo(p2.getEffectiveDate()));
     }
 
     public void decreaseStock(BigDecimal quantity) {
@@ -158,6 +196,40 @@ public class Product {
         this.name = newName.trim();
     }
 
+    /**
+     * Calcula o custo de uma quantidade específica desta matéria-prima
+     * baseado no preço mais recente registrado, com conversão automática de unidades.
+     * 
+     * @param quantity Quantidade a calcular o custo
+     * @return Custo total da quantidade
+     */
+    public Money calculateIngredientCost(Quantity quantity) {
+        if (this.type != ProductType.RAW_MATERIAL) {
+            throw new IllegalStateException("Cálculo de custo por quantidade só é aplicável a matérias-primas.");
+        }
+        
+        Optional<Price> currentPriceDetails = getCurrentPriceDetails();
+        if (currentPriceDetails.isEmpty()) {
+            return Money.ZERO; // Sem preço definido
+        }
+        
+        Price priceInfo = currentPriceDetails.get();
+        Money unitPrice = priceInfo.getValue();
+        UnitMeasurement priceUnit = priceInfo.getUnitMeasurement();
+        
+        // Converter a quantidade da receita para a mesma unidade do preço
+        Quantity convertedQuantity;
+        try {
+            convertedQuantity = UnitConverter.convert(quantity, priceUnit);
+        } catch (IllegalArgumentException e) {
+            // Se não conseguir converter, usar a quantidade original (compatibilidade)
+            convertedQuantity = quantity;
+        }
+        
+        // Custo = preço unitário × quantidade convertida
+        return unitPrice.multiply(convertedQuantity.value());
+    }
+
     public UUID getId() { return id; }
     public String getName() { return name; }
 
@@ -170,6 +242,7 @@ public class Product {
     }
 
     public BigDecimal getStock() { return stock; }
+    public UnitMeasurement getStockUnit() { return stockUnit; }
     public List<Price> getPricesHistory() { return List.copyOf(pricesHistory); }
 
 }

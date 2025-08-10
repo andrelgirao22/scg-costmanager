@@ -76,7 +76,7 @@ public class RawMaterialsView extends VerticalLayout {
 
     private void setupGrid() {
         grid.addColumn(Product::getName).setHeader("Nome").setSortable(true);
-        grid.addColumn(product -> formatStock(product.getStock())).setHeader("Estoque").setSortable(true);
+        grid.addColumn(product -> formatStock(product)).setHeader("Estoque").setSortable(true);
         grid.addColumn(product -> formatCurrentPrice(product)).setHeader("Preço Atual").setSortable(true);
 
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_ROW_STRIPES);
@@ -159,8 +159,15 @@ public class RawMaterialsView extends VerticalLayout {
         }
     }
 
-    private String formatStock(BigDecimal stock) {
-        return stock != null ? stock.stripTrailingZeros().toPlainString() + " kg" : "0 kg";
+    private String formatStock(Product product) {
+        BigDecimal stock = product.getStock();
+        String stockValue = stock != null ? stock.stripTrailingZeros().toPlainString() : "0";
+        
+        String unit = product.getStockUnit() != null ? 
+                     product.getStockUnit().getUnit() : 
+                     "kg"; // fallback para produtos antigos
+        
+        return stockValue + " " + unit;
     }
 
     private String formatCurrentPrice(Product product) {

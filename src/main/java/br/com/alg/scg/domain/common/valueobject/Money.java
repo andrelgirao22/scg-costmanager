@@ -31,7 +31,11 @@ public record Money(
     }
 
     public Money minus(Money newValue) {
-        return new Money(this.value.subtract(newValue.value));
+        BigDecimal result = this.value.subtract(newValue.value);
+        if (result.compareTo(BigDecimal.ZERO) < 0) {
+            return ZERO; // Retorna zero se o resultado for negativo
+        }
+        return new Money(result);
     }
 
     public Money multiply(BigDecimal factor) {

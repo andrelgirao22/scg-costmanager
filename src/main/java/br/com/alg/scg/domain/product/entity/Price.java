@@ -1,6 +1,7 @@
 package br.com.alg.scg.domain.product.entity;
 
 import br.com.alg.scg.domain.common.valueobject.Money;
+import br.com.alg.scg.domain.common.valueobject.UnitMeasurement;
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,10 @@ public class Price {
     @Embedded
     private Money value;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "unit_measurement", nullable = false)
+    private UnitMeasurement unitMeasurement;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
@@ -38,6 +43,15 @@ public class Price {
     public Price(Money value, LocalDateTime effectiveDate, Product product) {
         super();
         this.value = value;
+        this.unitMeasurement = UnitMeasurement.KILOGRAM; // Default para compatibilidade
+        this.effectiveDate = effectiveDate;
+        this.product = product;
+    }
+
+    public Price(Money value, UnitMeasurement unitMeasurement, LocalDateTime effectiveDate, Product product) {
+        super();
+        this.value = value;
+        this.unitMeasurement = unitMeasurement;
         this.effectiveDate = effectiveDate;
         this.product = product;
     }
